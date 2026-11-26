@@ -1,25 +1,94 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>FN Telecom</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
 font-family:Arial,sans-serif;
 background:#f1f5f3;
-color:#172b24;
+color:#173629;
 }
-header{
-background:#073e2d;
+
+button{
+border:0;
+padding:13px;
+border-radius:10px;
+background:#087b4e;
 color:white;
+font-size:15px;
+cursor:pointer;
+margin:5px 0;
+}
+
+input,select{
+width:100%;
+padding:14px;
+margin:8px 0;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:15px;
+}
+
+#authScreen{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
 padding:20px;
+background:linear-gradient(135deg,#043b29,#07945a);
+}
+
+.auth-card{
+width:100%;
+max-width:380px;
+background:white;
+padding:30px 25px;
+border-radius:22px;
 text-align:center;
 }
-header h1{font-size:26px}
-header p{font-size:13px;margin-top:5px}
+
+.auth-card h2{
+color:#087b4e;
+margin-bottom:10px;
+}
+
+.auth-card button{
+width:100%;
+}
+
+#registerBtn{
+background:#0755aa;
+}
+
+#authMessage{
+margin-top:12px;
+color:#d33;
+}
+
+#appScreen{
+display:none;
+padding-bottom:85px;
+}
+
+header{
+background:#06452f;
+color:white;
+padding:22px;
+text-align:center;
+}
 
 .container{
 max-width:650px;
@@ -30,42 +99,23 @@ padding:15px;
 .card{
 background:white;
 padding:18px;
-border-radius:15px;
+border-radius:16px;
 margin-bottom:15px;
-box-shadow:0 3px 12px #00000010;
+box-shadow:0 3px 12px #0001;
 }
 
-.balance{
-background:linear-gradient(135deg,#087b4e,#043d2c);
-color:white;
-padding:25px;
-border-radius:17px;
+.title{
+font-size:18px;
+font-weight:bold;
 margin-bottom:15px;
 }
 
-.balance h2{font-size:16px}
-.balance h1{font-size:32px;margin:12px 0}
-
-button{
-border:none;
-padding:12px 16px;
-border-radius:9px;
-background:#07864e;
-color:white;
-font-size:14px;
-cursor:pointer;
-margin:4px 0;
+.page{
+display:none;
 }
 
-button:hover{opacity:.85}
-
-input,select{
-width:100%;
-padding:13px;
-border:1px solid #ddd;
-border-radius:9px;
-margin:8px 0;
-font-size:15px;
+.page.active{
+display:block;
 }
 
 .grid{
@@ -75,47 +125,53 @@ gap:12px;
 }
 
 .operator{
-background:#f5f9f6;
-padding:18px 8px;
+background:#f1f8f3;
+padding:20px 5px;
 border-radius:12px;
 text-align:center;
 cursor:pointer;
-border:1px solid #e4eee8;
 font-weight:bold;
 }
 
 .operator span{
-font-size:27px;
 display:block;
+font-size:25px;
 margin-bottom:8px;
 }
 
-.title{
-font-size:18px;
-font-weight:bold;
-margin-bottom:15px;
-}
-
 .offer{
-border:1px solid #e4eee8;
 padding:15px;
+border:1px solid #e1eee5;
 border-radius:12px;
 margin-bottom:12px;
 }
 
-.offer h3{color:#087b4e;margin-bottom:7px}
-.offer p{font-size:14px;margin:5px 0}
+.offer h3{
+color:#087b4e;
+margin-bottom:8px;
+}
+
+.item{
+padding:13px;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+.small{
+font-size:12px;
+color:#777;
+}
 
 nav{
 position:fixed;
 bottom:0;
 left:0;
 width:100%;
-background:white;
 display:flex;
 justify-content:space-around;
-padding:12px 2px;
-box-shadow:0 -2px 10px #00000012;
+background:white;
+padding:9px 2px;
+box-shadow:0 -3px 12px #0002;
 z-index:10;
 }
 
@@ -126,884 +182,1219 @@ font-size:11px;
 padding:5px;
 }
 
-.page{display:none;padding-bottom:85px}
-.page.active{display:block}
-
-.hidden{display:none}
-
-.item{
-padding:12px;
-border-bottom:1px solid #eee;
-font-size:14px;
+.danger{
+background:#d93636;
 }
 
-.green{color:green}
-.red{color:red}
-
-footer{
-text-align:center;
-padding:20px;
-font-size:12px;
-color:#777;
+.logout{
+background:#d93636;
+width:100%;
 }
 
-.admin{
-background:#172b24;
-color:white;
+.status{
+color:#087b4e;
+font-weight:bold;
 }
 
-.small{font-size:12px;color:#777}
 </style>
+
 </head>
 
 <body>
 
-<header>
-<h1>🟢 FN Telecom</h1>
+<!-- LOGIN -->
+
+<div id="authScreen">
+
+<div class="auth-card">
+
+<div style="font-size:45px">📱</div>
+
+<h2>FN Telecom</h2>
+
 <p>আপনার বিশ্বস্ত টেলিকম সেবা</p>
+
+<br>
+
+<input id="email" type="email"
+placeholder="আপনার Email">
+
+<input id="password" type="password"
+placeholder="Password">
+
+<button id="loginBtn">Login করুন</button>
+
+<button id="registerBtn">নতুন Account খুলুন</button>
+
+<p id="authMessage"></p>
+
+</div>
+
+</div>
+
+
+<!-- APP -->
+
+<div id="appScreen">
+
+<header>
+
+<h1>🟢 FN Telecom</h1>
+
+<p>আপনার বিশ্বস্ত টেলিকম সেবা</p>
+
 </header>
 
 <div class="container">
 
+
 <!-- HOME -->
+
 <div id="home" class="page active">
 
-<div class="balance">
-<h2>💰 আপনার বর্তমান ব্যালেন্স</h2>
-<h1 id="balance">৳ 0.00</h1>
-<button onclick="showPage('addmoney')">
-+ ব্যালেন্স যোগ করুন
-</button>
+<div class="card">
+
+<div class="title">📱 মোবাইল নম্বর</div>
+
+<input id="mobile"
+type="tel"
+maxlength="11"
+placeholder="01XXXXXXXXX">
+
 </div>
 
 <div class="card">
-<div class="title">📱 মোবাইল রিচার্জ ও অফার</div>
 
-<input id="mobile" type="tel"
-placeholder="মোবাইল নম্বর লিখুন"
-maxlength="11">
-
-<button onclick="findOperator()">নম্বর যাচাই করুন</button>
-<p id="operatorResult"></p>
-</div>
-
-<div class="card">
 <div class="title">📡 অপারেটর নির্বাচন</div>
 
 <div class="grid">
 
-<div class="operator" onclick="selectOperator('GP')">
-<span>🟢</span>Grameenphone
+<div class="operator"
+onclick="selectOperator('GP')">
+<span>🟢</span>GP
 </div>
 
-<div class="operator" onclick="selectOperator('Banglalink')">
+<div class="operator"
+onclick="selectOperator('Banglalink')">
 <span>🟠</span>Banglalink
 </div>
 
-<div class="operator" onclick="selectOperator('Robi')">
+<div class="operator"
+onclick="selectOperator('Robi')">
 <span>🔴</span>Robi
 </div>
 
-<div class="operator" onclick="selectOperator('Airtel')">
+<div class="operator"
+onclick="selectOperator('Airtel')">
 <span>🔴</span>Airtel
 </div>
 
-<div class="operator" onclick="selectOperator('Teletalk')">
+<div class="operator"
+onclick="selectOperator('Teletalk')">
 <span>🔵</span>Teletalk
 </div>
 
 </div>
+
 </div>
 
 <div class="card">
+
 <div class="title">🔥 জনপ্রিয় অফার</div>
+
 <div id="homeOffers"></div>
+
 </div>
 
 <div class="card">
-<div class="title">📢 নোটিশ বোর্ড</div>
-<p id="notice">FN Telecom-এ আপনাকে স্বাগতম।</p>
+
+<div class="title">📢 নোটিশ</div>
+
+<p id="notice"></p>
+
 </div>
 
 </div>
+
 
 <!-- OFFERS -->
+
 <div id="offers" class="page">
+
 <div class="card">
+
 <div class="title">📦 সকল অফার</div>
 
-<select id="operatorFilter" onchange="renderOffers()">
+<select id="operatorFilter"
+onchange="renderOffers()">
+
 <option value="all">সকল অপারেটর</option>
 <option>GP</option>
 <option>Banglalink</option>
 <option>Robi</option>
 <option>Airtel</option>
 <option>Teletalk</option>
+
 </select>
 
 <div id="offerList"></div>
+
 </div>
+
 </div>
 
-<!-- ADD MONEY -->
-<div id="addmoney" class="page">
-<div class="card">
-<div class="title">💰 ব্যালেন্স যোগ করুন</div>
-
-<p>পেমেন্ট মাধ্যম নির্বাচন করুন</p>
-
-<select id="paymentMethod">
-<option value="বিকাশ">বিকাশ</option>
-<option value="নগদ">নগদ</option>
-</select>
-
-<input type="number" id="amount"
-placeholder="টাকার পরিমাণ">
-
-<input id="transaction"
-placeholder="ট্রানজেকশন আইডি">
-
-<button onclick="addMoneyRequest()">
-পেমেন্ট আবেদন করুন
-</button>
-
-<p class="small">
-আপনার আবেদন অ্যাডমিন যাচাই করার পর ব্যালেন্স যোগ হবে।
-</p>
-</div>
-</div>
 
 <!-- ORDERS -->
+
 <div id="orders" class="page">
+
 <div class="card">
+
 <div class="title">📋 আমার অর্ডার</div>
+
 <div id="orderList"></div>
+
 </div>
+
 </div>
+
 
 <!-- PROFILE -->
+
 <div id="profile" class="page">
+
 <div class="card">
+
 <div class="title">👤 আমার প্রোফাইল</div>
 
-<input id="userName" placeholder="আপনার নাম">
+<input id="userName"
+placeholder="আপনার নাম">
 
-<input id="userPhone" placeholder="মোবাইল নম্বর">
+<input id="userPhone"
+placeholder="মোবাইল নম্বর">
 
-<button onclick="saveProfile()">তথ্য সংরক্ষণ করুন</button>
+<p id="userEmail" class="small"></p>
 
-<hr style="margin:15px 0">
+<button onclick="saveProfile()">
+তথ্য সংরক্ষণ
+</button>
 
-<p>মোট অর্ডার: <b id="totalOrders">0</b></p>
-<p>বর্তমান ব্যালেন্স: <b id="profileBalance">৳ 0</b></p>
 </div>
 
 <div class="card">
-<div class="title">📞 যোগাযোগ</div>
+
 <p>FN Telecom</p>
+
 <p>WhatsApp: 01640592773</p>
-<button onclick="window.open('https://wa.me/8801640592773')">
+
+<button onclick="window.open(
+'https://wa.me/8801640592773')">
+
 WhatsApp যোগাযোগ
+
 </button>
-</div>
 
-<div class="card">
-<button onclick="showPage('adminLogin')">
-⚙️ অ্যাডমিন প্যানেল
+<button class="logout"
+onclick="logoutUser()">
+
+Logout
+
 </button>
-</div>
-</div>
 
-<!-- ADMIN LOGIN -->
-<div id="adminLogin" class="page">
-<div class="card">
-<div class="title">🔐 Admin Login</div>
-
-<input type="password" id="adminPin"
-placeholder="অ্যাডমিন পিন">
-
-<button onclick="adminLogin()">লগইন</button>
-
-<p class="small">
-ডেমো পিন: 1234
-</p>
-</div>
 </div>
 
-<!-- ADMIN PANEL -->
+</div>
+
+
+<!-- ADMIN -->
+
 <div id="admin" class="page">
 
-<div class="balance">
-<h2>⚙️ FN Telecom Admin</h2>
-<h1>Dashboard</h1>
-<button onclick="adminLogout()">Logout</button>
+<div class="card">
+
+<div class="title">⚙️ FN Telecom Admin</div>
+
+<h3>মোট অর্ডার:
+<span id="adminOrders">0</span>
+</h3>
+
+<br>
+
+<h3>সম্পন্ন অর্ডার:
+<span id="adminSuccess">0</span>
+</h3>
+
 </div>
 
-<div class="grid">
 
 <div class="card">
-মোট অর্ডার
-<h2 id="adminOrders">0</h2>
-</div>
 
-<div class="card">
-মোট বিক্রি
-<h2 id="adminSales">৳0</h2>
-</div>
-
-<div class="card">
-মোট গ্রাহক
-<h2 id="adminCustomers">1</h2>
-</div>
-
-<div class="card">
-ব্যালেন্স আবেদন
-<h2 id="adminRequests">0</h2>
-</div>
-
-</div>
-
-<div class="card">
 <div class="title">➕ নতুন অফার যোগ করুন</div>
 
 <select id="newOperator">
+
 <option>GP</option>
 <option>Banglalink</option>
 <option>Robi</option>
 <option>Airtel</option>
 <option>Teletalk</option>
+
 </select>
 
-<input id="newOfferName" placeholder="অফারের নাম">
-<input id="newOfferPrice" type="number" placeholder="বিক্রয় মূল্য">
-<input id="newOfferValidity" placeholder="মেয়াদ">
-<select id="newOfferType">
-<option>ইন্টারনেট</option>
-<option>মিনিট</option>
-<option>বান্ডেল</option>
-<option>অন্যান্য</option>
-</select>
+<input id="newOfferName"
+placeholder="অফারের নাম">
 
-<button onclick="addOffer()">অফার যোগ করুন</button>
+<input id="newOfferPrice"
+type="number"
+placeholder="মূল্য">
+
+<input id="newOfferValidity"
+placeholder="মেয়াদ">
+
+<button onclick="addOffer()">
+অফার যোগ করুন
+</button>
+
 </div>
 
+
 <div class="card">
+
 <div class="title">📦 অফার পরিচালনা</div>
+
 <div id="adminOfferList"></div>
+
 </div>
 
-<div class="card">
-<div class="title">💳 ব্যালেন্স আবেদন পরিচালনা</div>
-<div id="requestList"></div>
-</div>
 
 <div class="card">
-<div class="title">📋 সকল অর্ডার</div>
+
+<div class="title">📋 সকল কাস্টমার অর্ডার</div>
+
 <div id="adminOrderList"></div>
+
 </div>
 
-<div class="card">
-<div class="title">💰 গ্রাহকের ব্যালেন্স পরিচালনা</div>
-<input id="customerPhone" placeholder="গ্রাহকের নম্বর">
-<input id="customerAmount" type="number" placeholder="টাকার পরিমাণ">
-<button onclick="adminAddBalance()">ব্যালেন্স যোগ করুন</button>
-</div>
 
 <div class="card">
+
 <div class="title">📢 নোটিশ পরিবর্তন</div>
-<input id="newNotice" placeholder="নতুন নোটিশ লিখুন">
-<button onclick="updateNotice()">নোটিশ প্রকাশ করুন</button>
+
+<input id="newNotice"
+placeholder="নতুন নোটিশ">
+
+<button onclick="updateNotice()">
+নোটিশ প্রকাশ
+</button>
+
 </div>
+
+
+<button class="logout"
+onclick="showPage('profile')">
+
+প্রোফাইলে ফিরে যান
+
+</button>
 
 </div>
 
 </div>
 
-<nav>
-<button onclick="showPage('home')">🏠<br>হোম</button>
-<button onclick="showPage('offers')">📦<br>অফার</button>
-<button onclick="showPage('addmoney')">💰<br>ব্যালেন্স</button>
-<button onclick="showPage('orders')">📋<br>অর্ডার</button>
-<button onclick="showPage('profile')">👤<br>প্রোফাইল</button>
+
+<!-- MENU -->
+
+<nav id="mainNav">
+
+<button onclick="showPage('home')">
+🏠<br>হোম
+</button>
+
+<button onclick="showPage('offers')">
+📦<br>অফার
+</button>
+
+<button onclick="showPage('orders')">
+📋<br>অর্ডার
+</button>
+
+<button onclick="showPage('profile')">
+👤<br>প্রোফাইল
+</button>
+
+<button id="adminMenu"
+style="display:none"
+onclick="showPage('admin')">
+
+⚙️<br>Admin
+
+</button>
+
 </nav>
 
-<footer>
-FN Telecom © 2026
-<br>সকল স্বত্ব সংরক্ষিত
-</footer>
 
-<script>
+<script type="module">
 
-// DATA STORAGE
+import {
+initializeApp
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 
-let balance = Number(localStorage.getItem('balance') || 0);
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+onAuthStateChanged,
+signOut,
+sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
 
-let offers = JSON.parse(localStorage.getItem('offers') || '[]');
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+query,
+where,
+orderBy,
+onSnapshot,
+doc,
+setDoc,
+updateDoc,
+deleteDoc,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-let orders = JSON.parse(localStorage.getItem('orders') || '[]');
 
-let requests = JSON.parse(localStorage.getItem('requests') || '[]');
+/* FIREBASE CONFIG */
 
-let notice = localStorage.getItem('notice') ||
-'FN Telecom-এ আপনাকে স্বাগতম।';
+const firebaseConfig = {
 
-let profile = JSON.parse(localStorage.getItem('profile') ||
-'{"name":"","phone":""}');
+apiKey: "AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",
 
-let admin = false;
+authDomain: "fahim-ahmad-telecom.firebaseapp.com",
 
-function save(){
-localStorage.setItem('balance',balance);
-localStorage.setItem('offers',JSON.stringify(offers));
-localStorage.setItem('orders',JSON.stringify(orders));
-localStorage.setItem('requests',JSON.stringify(requests));
-localStorage.setItem('notice',notice);
-localStorage.setItem('profile',JSON.stringify(profile));
-}
+projectId: "fahim-ahmad-telecom",
 
-function showPage(id){
+storageBucket: "fahim-ahmad-telecom.firebasestorage.app",
 
-document.querySelectorAll('.page').forEach(p=>{
-p.classList.remove('active');
-});
+messagingSenderId: "965841120853",
 
-document.getElementById(id).classList.add('active');
+appId: "1:965841120853:web:7fc6a75769a0fdfbd0eedc",
 
-renderAll();
-}
+measurementId: "G-N325EFWEXN"
 
-// BALANCE
-
-function updateBalance(){
-
-document.getElementById('balance').innerText=
-'৳ '+balance.toFixed(2);
-
-document.getElementById('profileBalance').innerText=
-'৳ '+balance.toFixed(2);
-
-}
-
-// OPERATORS
-
-function selectOperator(op){
-
-document.getElementById('operatorFilter').value=op;
-
-showPage('offers');
-
-}
-
-function findOperator(){
-
-let number=document.getElementById('mobile').value;
-
-if(!/^01[3-9]\d{8}$/.test(number)){
-alert('সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর লিখুন');
-return;
-}
-
-let prefix=number.substring(0,3);
-
-let map={
-'013':'GP','017':'GP',
-'014':'Banglalink','019':'Banglalink',
-'018':'Robi','016':'Airtel',
-'015':'Teletalk'
 };
 
-let op=map[prefix] || 'অজানা';
 
-document.getElementById('operatorResult').innerText=
-'সম্ভাব্য অপারেটর: '+op+
-' | নম্বর: '+number+
-' | প্রয়োজনে অপারেটর নিশ্চিত করুন।';
+const app = initializeApp(firebaseConfig);
 
-}
+const auth = getAuth(app);
 
-// OFFERS
+const db = getFirestore(app);
 
-function addOffer(){
 
-let name=document.getElementById('newOfferName').value;
+/* VARIABLES */
 
-let price=Number(document.getElementById('newOfferPrice').value);
+let currentUser = null;
 
-let validity=document.getElementById('newOfferValidity').value;
+let isAdmin = false;
 
-if(!name || price<=0 || !validity){
-alert('সব তথ্য পূরণ করুন');
+let offers = [];
+
+let orders = [];
+
+let selectedOperator = 'all';
+
+let unsubOffers = null;
+let unsubOrders = null;
+let unsubAdminOrders = null;
+let unsubSettings = null;
+
+
+/* ELEMENTS */
+
+const authScreen =
+document.getElementById('authScreen');
+
+const appScreen =
+document.getElementById('appScreen');
+
+const message =
+document.getElementById('authMessage');
+
+
+/* REGISTER */
+
+document.getElementById('registerBtn')
+.onclick = async () => {
+
+try {
+
+let email =
+document.getElementById('email').value.trim();
+
+let password =
+document.getElementById('password').value;
+
+if(!email || password.length < 6){
+
+message.innerText =
+'সঠিক Email এবং কমপক্ষে ৬ অক্ষরের Password দিন';
+
 return;
+
 }
 
-offers.push({
-id:Date.now(),
-operator:document.getElementById('newOperator').value,
-name:name,
-price:price,
-validity:validity,
-type:document.getElementById('newOfferType').value
+let result =
+await createUserWithEmailAndPassword(
+auth,email,password
+);
+
+await sendEmailVerification(result.user);
+
+message.innerText =
+'Account তৈরি হয়েছে। Email যাচাই করে Login করুন।';
+
+} catch(error){
+
+message.innerText = error.message;
+
+}
+
+};
+
+
+/* LOGIN */
+
+document.getElementById('loginBtn')
+.onclick = async () => {
+
+try{
+
+let email =
+document.getElementById('email').value.trim();
+
+let password =
+document.getElementById('password').value;
+
+await signInWithEmailAndPassword(
+auth,email,password
+);
+
+message.innerText = '';
+
+}catch(error){
+
+message.innerText = error.message;
+
+}
+
+};
+
+
+/* AUTH */
+
+onAuthStateChanged(auth, async user => {
+
+if(user){
+
+currentUser = user;
+
+await user.reload();
+
+await user.getIdToken(true);
+
+isAdmin =
+user.email === 'faiyaazfahim608@gmail.com'
+&& user.emailVerified;
+
+authScreen.style.display = 'none';
+
+appScreen.style.display = 'block';
+
+document.getElementById('userEmail')
+.innerText = user.email;
+
+document.getElementById('adminMenu')
+.style.display = isAdmin ? 'block' : 'none';
+
+loadData();
+
+showPage('home');
+
+}else{
+
+currentUser = null;
+
+isAdmin = false;
+
+cleanupListeners();
+
+authScreen.style.display = 'flex';
+
+appScreen.style.display = 'none';
+
+}
+
 });
 
-save();
-renderAll();
 
-alert('অফার যোগ হয়েছে');
+/* CLEANUP */
 
+function cleanupListeners(){
+
+[
+'unsubOffers',
+'unsubOrders',
+'unsubAdminOrders',
+'unsubSettings'
+].forEach(name => {
+
+if(window[name]){
+window[name]();
+window[name] = null;
 }
-
-function renderOffers(){
-
-let filter=document.getElementById('operatorFilter').value;
-
-let html='';
-
-offers.filter(o=>filter==='all'||o.operator===filter)
-.forEach(o=>{
-
-html+=`
-<div class="offer">
-<h3>${escapeHTML(o.operator)} - ${escapeHTML(o.name)}</h3>
-<p>ধরন: ${escapeHTML(o.type)}</p>
-<p>মেয়াদ: ${escapeHTML(o.validity)}</p>
-<p>মূল্য: ৳${o.price}</p>
-<button onclick="buyOffer(${o.id})">অর্ডার করুন</button>
-</div>
-`;
 
 });
 
-document.getElementById('offerList').innerHTML=
-html || 'এখনো কোনো অফার যোগ করা হয়নি।';
+}
+
+
+/* LOGOUT */
+
+window.logoutUser = async () => {
+
+await signOut(auth);
+
+};
+
+
+/* PAGE */
+
+window.showPage = function(id){
+
+if(id === 'admin' && !isAdmin){
+
+alert('Admin অনুমতি নেই');
+
+return;
 
 }
 
-function renderHome(){
+document.querySelectorAll('.page')
+.forEach(p => p.classList.remove('active'));
 
-document.getElementById('homeOffers').innerHTML=
-offers.slice(0,3).map(o=>`
+document.getElementById(id)
+.classList.add('active');
+
+};
+
+
+/* LOAD DATA */
+
+function loadData(){
+
+cleanupListeners();
+
+loadOffers();
+
+loadMyOrders();
+
+loadProfile();
+
+loadNotice();
+
+if(isAdmin){
+
+loadAdminOrders();
+
+}
+
+}
+
+
+/* OFFERS */
+
+function loadOffers(){
+
+unsubOffers = onSnapshot(
+collection(db,'offers'),
+
+snapshot => {
+
+offers = snapshot.docs.map(d => ({
+id:d.id,
+...d.data()
+}));
+
+renderOffers();
+
+renderHomeOffers();
+
+if(isAdmin) renderAdminOffers();
+
+},
+
+error => alert('অফার লোড হয়নি: '+error.message)
+
+);
+
+}
+
+
+/* RENDER OFFERS */
+
+window.renderOffers = function(){
+
+let filter =
+document.getElementById('operatorFilter').value;
+
+document.getElementById('offerList')
+.innerHTML = offers
+
+.filter(o =>
+filter === 'all' ||
+o.operator === filter
+)
+
+.map(o => `
+
 <div class="offer">
+
 <h3>${escapeHTML(o.name)}</h3>
-<p>${escapeHTML(o.operator)} | ৳${o.price}</p>
+
+<p>অপারেটর: ${escapeHTML(o.operator)}</p>
+
+<p>মেয়াদ: ${escapeHTML(o.validity)}</p>
+
+<p>মূল্য: ৳${Number(o.price)}</p>
+
+<button onclick="buyOffer('${o.id}')">
+
+অর্ডার করুন
+
+</button>
+
 </div>
+
+`).join('') || 'কোনো অফার নেই।';
+
+};
+
+
+/* HOME OFFERS */
+
+function renderHomeOffers(){
+
+document.getElementById('homeOffers')
+.innerHTML = offers.slice(0,3)
+
+.map(o => `
+
+<div class="offer">
+
+<h3>${escapeHTML(o.name)}</h3>
+
+<p>${escapeHTML(o.operator)}</p>
+
+<p>৳${Number(o.price)}</p>
+
+<button onclick="buyOffer('${o.id}')">
+অর্ডার করুন
+</button>
+
+</div>
+
 `).join('') || 'কোনো অফার নেই।';
 
 }
 
-// ORDER
 
-function buyOffer(id){
+/* BUY OFFER */
 
-let offer=offers.find(o=>o.id===id);
+window.buyOffer = async function(id){
 
-if(!offer)return;
+let offer = offers.find(o => o.id === id);
 
-let phone=document.getElementById('mobile').value;
+if(!offer) return;
+
+let phone =
+document.getElementById('mobile').value.trim();
 
 if(!/^01[3-9]\d{8}$/.test(phone)){
-alert('প্রথমে সঠিক মোবাইল নম্বর লিখুন');
+
+alert('সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন');
+
 showPage('home');
+
 return;
+
 }
 
-if(balance<offer.price){
-alert('আপনার ব্যালেন্স পর্যাপ্ত নয়।');
-showPage('addmoney');
-return;
-}
+if(!confirm(
+offer.name+' অর্ডার করবেন?'
+)) return;
 
-if(!confirm('৳'+offer.price+' দিয়ে অর্ডার করবেন?'))return;
+try{
 
-balance-=offer.price;
+await addDoc(collection(db,'orders'),{
 
-orders.push({
-id:Date.now(),
+userId:currentUser.uid,
+
+userEmail:currentUser.email,
+
 offer:offer.name,
+
+operator:offer.operator,
+
 phone:phone,
-price:offer.price,
+
+price:Number(offer.price),
+
 status:'Pending',
-date:new Date().toLocaleString('bn-BD')
+
+createdAt:serverTimestamp()
+
 });
 
-save();
-renderAll();
+alert('অর্ডার সফলভাবে জমা হয়েছে!');
 
-alert('অর্ডার তৈরি হয়েছে। অ্যাডমিনের অনুমোদনের অপেক্ষায় আছে।');
+showPage('orders');
+
+}catch(error){
+
+alert('অর্ডার জমা হয়নি: '+error.message);
 
 }
 
-function renderOrders(){
+};
 
-document.getElementById('orderList').innerHTML=
-orders.map(o=>`
+
+/* MY ORDERS */
+
+function loadMyOrders(){
+
+let q = query(
+
+collection(db,'orders'),
+
+where('userId','==',currentUser.uid),
+
+orderBy('createdAt','desc')
+
+);
+
+unsubOrders = onSnapshot(q,snapshot => {
+
+orders = snapshot.docs.map(d => ({
+id:d.id,
+...d.data()
+}));
+
+renderMyOrders();
+
+},error => {
+
+console.error(error);
+
+});
+
+}
+
+
+function renderMyOrders(){
+
+document.getElementById('orderList')
+.innerHTML = orders.map(o => `
+
 <div class="item">
-<b>${escapeHTML(o.offer)}</b><br>
-নম্বর: ${escapeHTML(o.phone)}<br>
-মূল্য: ৳${o.price}<br>
-অবস্থা: ${escapeHTML(o.status)}<br>
-${escapeHTML(o.date)}
+
+<b>${escapeHTML(o.offer)}</b>
+
+<br>
+
+অপারেটর: ${escapeHTML(o.operator)}
+
+<br>
+
+নম্বর: ${escapeHTML(o.phone)}
+
+<br>
+
+মূল্য: ৳${Number(o.price)}
+
+<br>
+
+অবস্থা:
+
+<span class="status">
+${escapeHTML(o.status)}
+</span>
+
 </div>
+
+`).join('') || 'এখনো কোনো অর্ডার নেই।';
+
+}
+
+
+/* ADMIN ORDERS */
+
+function loadAdminOrders(){
+
+unsubAdminOrders = onSnapshot(
+
+query(
+collection(db,'orders'),
+orderBy('createdAt','desc')
+),
+
+snapshot => {
+
+let all = snapshot.docs.map(d => ({
+id:d.id,
+...d.data()
+}));
+
+document.getElementById('adminOrders')
+.innerText = all.length;
+
+document.getElementById('adminSuccess')
+.innerText = all.filter(
+o => o.status === 'Successful'
+).length;
+
+document.getElementById('adminOrderList')
+.innerHTML = all.map(o => `
+
+<div class="item">
+
+<b>${escapeHTML(o.offer)}</b>
+
+<br>
+
+কাস্টমার: ${escapeHTML(o.userEmail)}
+
+<br>
+
+মোবাইল: <b>${escapeHTML(o.phone)}</b>
+
+<br>
+
+অপারেটর: ${escapeHTML(o.operator)}
+
+<br>
+
+মূল্য: ৳${Number(o.price)}
+
+<br>
+
+অবস্থা: ${escapeHTML(o.status)}
+
+<br>
+
+${o.status === 'Pending' ? `
+
+<button onclick="changeOrder('${o.id}','Successful')">
+Successful
+</button>
+
+<button class="danger"
+onclick="changeOrder('${o.id}','Cancelled')">
+Cancelled
+</button>
+
+` : ''}
+
+</div>
+
 `).join('') || 'কোনো অর্ডার নেই।';
 
+},
+
+error => alert('Admin Order Error: '+error.message)
+
+);
+
 }
 
-// ADD MONEY
 
-function addMoneyRequest(){
+/* CHANGE ORDER */
 
-let amount=Number(document.getElementById('amount').value);
+window.changeOrder = async function(id,status){
 
-let trx=document.getElementById('transaction').value;
+if(!isAdmin){
 
-if(amount<=0 || !trx){
-alert('সঠিক তথ্য দিন');
+alert('অনুমতি নেই');
+
 return;
+
 }
 
-requests.push({
-id:Date.now(),
-amount:amount,
-method:document.getElementById('paymentMethod').value,
-trx:trx,
-status:'Pending'
+try{
+
+await updateDoc(doc(db,'orders',id),{
+
+status:status
+
 });
 
-save();
-renderAll();
+alert('অর্ডার আপডেট হয়েছে');
 
-alert('আপনার আবেদন জমা হয়েছে। যাচাইয়ের পর ব্যালেন্স যোগ হবে।');
+}catch(error){
 
-}
-
-// ADMIN
-
-function adminLogin(){
-
-let pin=document.getElementById('adminPin').value;
-
-if(pin==='1234'){
-
-admin=true;
-showPage('admin');
-
-}else{
-
-alert('ভুল পিন');
+alert(error.message);
 
 }
 
-}
+};
 
-function adminLogout(){
 
-admin=false;
-showPage('home');
+/* ADD OFFER */
 
-}
+window.addOffer = async function(){
 
-function adminAddBalance(){
+if(!isAdmin) return;
 
-if(!admin)return;
+let name =
+document.getElementById('newOfferName').value.trim();
 
-let phone=document.getElementById('customerPhone').value;
+let price =
+Number(document.getElementById('newOfferPrice').value);
 
-let amount=Number(document.getElementById('customerAmount').value);
+let validity =
+document.getElementById('newOfferValidity').value.trim();
 
-if(!phone || amount<=0){
-alert('সঠিক তথ্য দিন');
+let operator =
+document.getElementById('newOperator').value;
+
+if(!name || price <= 0 || !validity){
+
+alert('সব তথ্য পূরণ করুন');
+
 return;
-}
-
-if(phone!==profile.phone){
-alert('এই ডেমোতে শুধু বর্তমান প্রোফাইলের ব্যালেন্স পরিবর্তন করা যাবে।');
-return;
-}
-
-balance+=amount;
-
-save();
-renderAll();
-
-alert('ব্যালেন্স আপডেট হয়েছে');
 
 }
 
-function approveRequest(id){
+try{
 
-let r=requests.find(x=>x.id===id);
+await addDoc(collection(db,'offers'),{
 
-if(!r || r.status!=='Pending')return;
+name,
+price,
+validity,
+operator,
+createdAt:serverTimestamp()
 
-r.status='Approved';
+});
 
-balance+=r.amount;
+document.getElementById('newOfferName').value='';
 
-save();
-renderAll();
+document.getElementById('newOfferPrice').value='';
 
-}
+document.getElementById('newOfferValidity').value='';
 
-function rejectRequest(id){
+alert('নতুন অফার যোগ হয়েছে');
 
-let r=requests.find(x=>x.id===id);
+}catch(error){
 
-if(!r || r.status!=='Pending')return;
-
-r.status='Rejected';
-
-save();
-renderAll();
+alert(error.message);
 
 }
 
-function changeOrder(id,status){
+};
 
-let o=orders.find(x=>x.id===id);
 
-if(!o)return;
-
-o.status=status;
-
-save();
-renderAll();
-
-}
-
-// ADMIN OFFER LIST
+/* ADMIN OFFER LIST */
 
 function renderAdminOffers(){
 
-document.getElementById('adminOfferList').innerHTML=
-offers.map(o=>`
+document.getElementById('adminOfferList')
+.innerHTML = offers.map(o => `
+
 <div class="item">
-<b>${escapeHTML(o.name)}</b> - ৳${o.price}
-<br>${escapeHTML(o.operator)}
+
+${escapeHTML(o.name)}
+
 <br>
-<button onclick="deleteOffer(${o.id})">ডিলিট</button>
-</div>
-`).join('') || 'কোনো অফার নেই';
 
-}
+${escapeHTML(o.operator)}
 
-function deleteOffer(id){
-
-if(!confirm('অফার মুছে ফেলবেন?'))return;
-
-offers=offers.filter(o=>o.id!==id);
-
-save();
-renderAll();
-
-}
-
-// REQUEST LIST
-
-function renderRequests(){
-
-document.getElementById('requestList').innerHTML=
-requests.map(r=>`
-<div class="item">
-পদ্ধতি: ${escapeHTML(r.method)}<br>
-পরিমাণ: ৳${r.amount}<br>
-ট্রানজেকশন: ${escapeHTML(r.trx)}<br>
-অবস্থা: ${escapeHTML(r.status)}
 <br>
-${r.status==='Pending'?`
-<button onclick="approveRequest(${r.id})">অনুমোদন</button>
-<button onclick="rejectRequest(${r.id})">বাতিল</button>
-`:''}
+
+৳${Number(o.price)}
+
+<button class="danger"
+onclick="deleteOffer('${o.id}')">
+
+ডিলিট
+
+</button>
+
 </div>
-`).join('') || 'কোনো আবেদন নেই';
+
+`).join('') || 'কোনো অফার নেই।';
 
 }
 
-// ADMIN ORDERS
 
-function renderAdminOrders(){
+/* DELETE OFFER */
 
-document.getElementById('adminOrderList').innerHTML=
-orders.map(o=>`
-<div class="item">
-<b>${escapeHTML(o.offer)}</b><br>
-নম্বর: ${escapeHTML(o.phone)}<br>
-মূল্য: ৳${o.price}<br>
-অবস্থা: ${escapeHTML(o.status)}
-<br>
-<button onclick="changeOrder(${o.id},'Successful')">সম্পন্ন</button>
-<button onclick="changeOrder(${o.id},'Cancelled')">বাতিল</button>
-</div>
-`).join('') || 'কোনো অর্ডার নেই';
+window.deleteOffer = async function(id){
+
+if(!isAdmin) return;
+
+if(!confirm('অফার মুছে ফেলবেন?')) return;
+
+try{
+
+await deleteDoc(doc(db,'offers',id));
+
+alert('অফার মুছে ফেলা হয়েছে');
+
+}catch(error){
+
+alert(error.message);
 
 }
 
-// PROFILE
+};
 
-function saveProfile(){
 
-profile.name=document.getElementById('userName').value;
-profile.phone=document.getElementById('userPhone').value;
+/* PROFILE */
 
-save();
+async function loadProfile(){
+
+let ref = doc(db,'users',currentUser.uid);
+
+let snap = await getDoc(ref);
+
+if(snap.exists()){
+
+let data = snap.data();
+
+document.getElementById('userName').value =
+data.name || '';
+
+document.getElementById('userPhone').value =
+data.phone || '';
+
+}
+
+}
+
+
+window.saveProfile = async function(){
+
+let name =
+document.getElementById('userName').value.trim();
+
+let phone =
+document.getElementById('userPhone').value.trim();
+
+try{
+
+await setDoc(
+doc(db,'users',currentUser.uid),
+
+{
+name,
+phone,
+email:currentUser.email
+},
+
+{merge:true}
+
+);
 
 alert('প্রোফাইল সংরক্ষিত হয়েছে');
 
-}
+}catch(error){
 
-// NOTICE
-
-function updateNotice(){
-
-notice=document.getElementById('newNotice').value;
-
-save();
-
-renderAll();
-
-alert('নোটিশ আপডেট হয়েছে');
+alert(error.message);
 
 }
 
-// SECURITY: TEXT DISPLAY
+};
 
-function escapeHTML(value){
 
-return String(value).replace(/[&<>"']/g,c=>({
+/* NOTICE */
+
+function loadNotice(){
+
+unsubSettings = onSnapshot(
+doc(db,'settings','notice'),
+
+snap => {
+
+document.getElementById('notice')
+.innerText = snap.exists()
+? snap.data().text
+: 'FN Telecom-এ আপনাকে স্বাগতম।';
+
+}
+
+);
+
+
+}
+
+
+window.updateNotice = async function(){
+
+if(!isAdmin) return;
+
+let text =
+document.getElementById('newNotice').value.trim();
+
+if(!text) return alert('নোটিশ লিখুন');
+
+try{
+
+await setDoc(
+doc(db,'settings','notice'),
+{text}
+);
+
+alert('নোটিশ প্রকাশ হয়েছে');
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+};
+
+
+/* HTML SECURITY */
+
+function escapeHTML(v){
+
+return String(v ?? '').replace(/[&<>"']/g,c=>({
+
 '&':'&amp;',
 '<':'&lt;',
 '>':'&gt;',
 '"':'&quot;',
 "'":'&#39;'
+
 })[c]);
 
 }
 
-// RENDER ALL
 
-function renderAll(){
+/* OPERATOR */
 
-updateBalance();
+window.selectOperator = function(op){
 
-renderHome();
+document.getElementById('operatorFilter').value = op;
 
-renderOffers();
+showPage('offers');
 
-renderOrders();
-
-renderAdminOffers();
-
-renderRequests();
-
-renderAdminOrders();
-
-document.getElementById('notice').innerText=notice;
-
-document.getElementById('userName').value=profile.name;
-document.getElementById('userPhone').value=profile.phone;
-
-document.getElementById('totalOrders').innerText=orders.length;
-
-document.getElementById('adminOrders').innerText=orders.length;
-
-document.getElementById('adminSales').innerText=
-'৳'+orders.filter(o=>o.status==='Successful')
-.reduce((s,o)=>s+o.price,0);
-
-document.getElementById('adminRequests').innerText=
-requests.filter(r=>r.status==='Pending').length;
-
-document.getElementById('adminCustomers').innerText=
-profile.phone?1:0;
-
-}
-
-renderAll();
+};
 
 </script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",
-  authDomain: "fahim-ahmad-telecom.firebaseapp.com",
-  projectId: "fahim-ahmad-telecom",
-  storageBucket: "fahim-ahmad-telecom.firebasestorage.app",
-  messagingSenderId: "965841120853",
-  appId: "1:965841120853:web:7fc6a75769a0fdfbd0eedc",
-  measurementId: "G-N325EFWEXN"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.firebaseApp = app;
-window.db = db;
-
-console.log("Firebase Connected!");
-
-try {
-  const result = await getDoc(doc(db, "users", "admin"));
-  console.log("Database Connected!", result.exists());
-} catch (error) {
-  console.error("Database Error:", error);
-}
-</script><div id="authBox" style="max-width:350px;margin:30px auto;padding:20px;background:white;border-radius:12px;box-shadow:0 2px 10px #ccc;text-align:center;">
-  <h2>Fahim Ahmad Telecom</h2>
-  <h3>Login / Register</h3>
-
-  <input id="email" type="email" placeholder="Email Address"
-  style="width:95%;padding:12px;margin:8px 0;">
-
-  <input id="password" type="password" placeholder="Password"
-  style="width:95%;padding:12px;margin:8px 0;">
-
-  <button id="registerBtn" style="padding:12px;width:100%;margin:5px;background:#087d45;color:white;border:0;">
-    Create Account
-  </button>
-
-  <button id="loginBtn" style="padding:12px;width:100%;margin:5px;background:#0755aa;color:white;border:0;">
-    Login
-  </button>
-
-  <p id="authMessage"></p>
-  <button id="logoutBtn" style="display:none;">Logout</button>
-</div>
-
-<script type="module">
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
-
-import { getApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
-
-const auth = getAuth(getApp());
-
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const message = document.getElementById("authMessage");
-
-document.getElementById("registerBtn").onclick = async () => {
-  try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value);
-    message.innerText = "Account created successfully!";
-  } catch(error) {
-    message.innerText = error.message;
-  }
-};
-
-document.getElementById("loginBtn").onclick = async () => {
-  try {
-    await signInWithEmailAndPassword(auth, email.value, password.value);
-    message.innerText = "Login successful!";
-  } catch(error) {
-    message.innerText = error.message;
-  }
-};
-
-document.getElementById("logoutBtn").onclick = () => signOut(auth);
-
-onAuthStateChanged(auth, user => {
-  document.getElementById("logoutBtn").style.display = user ? "block" : "none";
-  message.innerText = user ? "Logged in: " + user.email : "Please login";
-});
-</script>
 </body>
-</html> Fahim-Ahmad-Telecom
+</html>
