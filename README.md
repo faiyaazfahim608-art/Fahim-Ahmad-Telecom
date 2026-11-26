@@ -947,6 +947,63 @@ try {
 } catch (error) {
   console.error("Database Error:", error);
 }
+</script><div id="authBox" style="max-width:350px;margin:30px auto;padding:20px;background:white;border-radius:12px;box-shadow:0 2px 10px #ccc;text-align:center;">
+  <h2>Fahim Ahmad Telecom</h2>
+  <h3>Login / Register</h3>
+
+  <input id="email" type="email" placeholder="Email Address"
+  style="width:95%;padding:12px;margin:8px 0;">
+
+  <input id="password" type="password" placeholder="Password"
+  style="width:95%;padding:12px;margin:8px 0;">
+
+  <button id="registerBtn" style="padding:12px;width:100%;margin:5px;background:#087d45;color:white;border:0;">
+    Create Account
+  </button>
+
+  <button id="loginBtn" style="padding:12px;width:100%;margin:5px;background:#0755aa;color:white;border:0;">
+    Login
+  </button>
+
+  <p id="authMessage"></p>
+  <button id="logoutBtn" style="display:none;">Logout</button>
+</div>
+
+<script type="module">
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+import { getApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+
+const auth = getAuth(getApp());
+
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const message = document.getElementById("authMessage");
+
+document.getElementById("registerBtn").onclick = async () => {
+  try {
+    await createUserWithEmailAndPassword(auth, email.value, password.value);
+    message.innerText = "Account created successfully!";
+  } catch(error) {
+    message.innerText = error.message;
+  }
+};
+
+document.getElementById("loginBtn").onclick = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    message.innerText = "Login successful!";
+  } catch(error) {
+    message.innerText = error.message;
+  }
+};
+
+document.getElementById("logoutBtn").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, user => {
+  document.getElementById("logoutBtn").style.display = user ? "block" : "none";
+  message.innerText = user ? "Logged in: " + user.email : "Please login";
+});
 </script>
 </body>
 </html> Fahim-Ahmad-Telecom
