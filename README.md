@@ -920,20 +920,33 @@ renderAll();
 
 </script>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",
-    authDomain: "fahim-ahmad-telecom.firebaseapp.com",
-    projectId: "fahim-ahmad-telecom",
-    storageBucket: "fahim-ahmad-telecom.firebasestorage.app",
-    messagingSenderId: "965841120853",
-    appId: "1:965841120853:web:7fc6a75769a0fdfbd0eedc",
-    measurementId: "G-N325EFWEXN"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",
+  authDomain: "fahim-ahmad-telecom.firebaseapp.com",
+  projectId: "fahim-ahmad-telecom",
+  storageBucket: "fahim-ahmad-telecom.firebasestorage.app",
+  messagingSenderId: "965841120853",
+  appId: "1:965841120853:web:7fc6a75769a0fdfbd0eedc",
+  measurementId: "G-N325EFWEXN"
+};
 
-  const app = initializeApp(firebaseConfig);
-  console.log("Firebase Connected!");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.firebaseApp = app;
+window.db = db;
+
+console.log("Firebase Connected!");
+
+try {
+  const result = await getDoc(doc(db, "users", "admin"));
+  console.log("Database Connected!", result.exists());
+} catch (error) {
+  console.error("Database Error:", error);
+}
 </script>
 </body>
 </html> Fahim-Ahmad-Telecom
