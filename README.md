@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html lang="bn">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>FN Telecom</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
 font-family:Arial,sans-serif;
@@ -60,28 +52,12 @@ border-radius:22px;
 text-align:center;
 }
 
-.auth-card h2{
-color:#087b4e;
-margin-bottom:10px;
-}
+.auth-card h2{color:#087b4e;margin-bottom:10px}
+.auth-card button{width:100%}
+#registerBtn{background:#0755aa}
+#authMessage{margin-top:12px;color:#d33}
 
-.auth-card button{
-width:100%;
-}
-
-#registerBtn{
-background:#0755aa;
-}
-
-#authMessage{
-margin-top:12px;
-color:#d33;
-}
-
-#appScreen{
-display:none;
-padding-bottom:85px;
-}
+#appScreen{display:none;padding-bottom:85px}
 
 header{
 background:#06452f;
@@ -90,11 +66,7 @@ padding:22px;
 text-align:center;
 }
 
-.container{
-max-width:650px;
-margin:auto;
-padding:15px;
-}
+.container{max-width:650px;margin:auto;padding:15px}
 
 .card{
 background:white;
@@ -104,19 +76,10 @@ margin-bottom:15px;
 box-shadow:0 3px 12px #0001;
 }
 
-.title{
-font-size:18px;
-font-weight:bold;
-margin-bottom:15px;
-}
+.title{font-size:18px;font-weight:bold;margin-bottom:15px}
 
-.page{
-display:none;
-}
-
-.page.active{
-display:block;
-}
+.page{display:none}
+.page.active{display:block}
 
 .grid{
 display:grid;
@@ -133,11 +96,7 @@ cursor:pointer;
 font-weight:bold;
 }
 
-.operator span{
-display:block;
-font-size:25px;
-margin-bottom:8px;
-}
+.operator span{display:block;font-size:25px;margin-bottom:8px}
 
 .offer{
 padding:15px;
@@ -146,21 +105,10 @@ border-radius:12px;
 margin-bottom:12px;
 }
 
-.offer h3{
-color:#087b4e;
-margin-bottom:8px;
-}
+.offer h3{color:#087b4e;margin-bottom:8px}
 
-.item{
-padding:13px;
-border-bottom:1px solid #eee;
-font-size:14px;
-}
-
-.small{
-font-size:12px;
-color:#777;
-}
+.item{padding:13px;border-bottom:1px solid #eee;font-size:14px}
+.small{font-size:12px;color:#777}
 
 nav{
 position:fixed;
@@ -182,362 +130,222 @@ font-size:11px;
 padding:5px;
 }
 
-.danger{
-background:#d93636;
-}
-
-.logout{
-background:#d93636;
-width:100%;
-}
-
-.status{
-color:#087b4e;
-font-weight:bold;
-}
-
+.danger{background:#d93636}
+.orange{background:#df8b15}
+.blue{background:#0755aa}
+.logout{background:#d93636;width:100%}
+.status{color:#087b4e;font-weight:bold}
+.hidden{display:none!important}
 </style>
-
 </head>
 
 <body>
 
-<!-- LOGIN -->
-
 <div id="authScreen">
-
 <div class="auth-card">
 
 <div style="font-size:45px">📱</div>
-
 <h2>FN Telecom</h2>
-
 <p>আপনার বিশ্বস্ত টেলিকম সেবা</p>
 
 <br>
 
-<input id="email" type="email"
-placeholder="আপনার Email">
-
-<input id="password" type="password"
-placeholder="Password">
+<input id="email" type="email" placeholder="আপনার Email">
+<input id="password" type="password" placeholder="Password">
 
 <button id="loginBtn">Login করুন</button>
-
 <button id="registerBtn">নতুন Account খুলুন</button>
 
 <p id="authMessage"></p>
 
 </div>
-
 </div>
-
-
-<!-- APP -->
 
 <div id="appScreen">
 
 <header>
-
 <h1>🟢 FN Telecom</h1>
-
 <p>আপনার বিশ্বস্ত টেলিকম সেবা</p>
-
 </header>
 
 <div class="container">
-
 
 <!-- HOME -->
 
 <div id="home" class="page active">
 
 <div class="card">
-
 <div class="title">📱 মোবাইল নম্বর</div>
-
-<input id="mobile"
-type="tel"
-maxlength="11"
-placeholder="01XXXXXXXXX">
-
+<input id="mobile" type="tel" maxlength="11" placeholder="01XXXXXXXXX">
 </div>
 
 <div class="card">
-
 <div class="title">📡 অপারেটর নির্বাচন</div>
 
 <div class="grid">
 
-<div class="operator"
-onclick="selectOperator('GP')">
+<div class="operator" onclick="selectOperator('GP')">
 <span>🟢</span>GP
 </div>
 
-<div class="operator"
-onclick="selectOperator('Banglalink')">
+<div class="operator" onclick="selectOperator('Banglalink')">
 <span>🟠</span>Banglalink
 </div>
 
-<div class="operator"
-onclick="selectOperator('Robi')">
+<div class="operator" onclick="selectOperator('Robi')">
 <span>🔴</span>Robi
 </div>
 
-<div class="operator"
-onclick="selectOperator('Airtel')">
+<div class="operator" onclick="selectOperator('Airtel')">
 <span>🔴</span>Airtel
 </div>
 
-<div class="operator"
-onclick="selectOperator('Teletalk')">
+<div class="operator" onclick="selectOperator('Teletalk')">
 <span>🔵</span>Teletalk
 </div>
 
 </div>
-
 </div>
 
 <div class="card">
-
 <div class="title">🔥 জনপ্রিয় অফার</div>
-
 <div id="homeOffers"></div>
-
 </div>
 
 <div class="card">
-
 <div class="title">📢 নোটিশ</div>
-
-<p id="notice"></p>
-
+<p id="notice">স্বাগতম FN Telecom</p>
 </div>
 
 </div>
-
 
 <!-- OFFERS -->
 
 <div id="offers" class="page">
 
 <div class="card">
-
 <div class="title">📦 সকল অফার</div>
 
-<select id="operatorFilter"
-onchange="renderOffers()">
-
+<select id="operatorFilter" onchange="renderOffers()">
 <option value="all">সকল অপারেটর</option>
 <option>GP</option>
 <option>Banglalink</option>
 <option>Robi</option>
 <option>Airtel</option>
 <option>Teletalk</option>
-
 </select>
 
 <div id="offerList"></div>
-
 </div>
-
 </div>
-
 
 <!-- ORDERS -->
 
 <div id="orders" class="page">
-
 <div class="card">
-
 <div class="title">📋 আমার অর্ডার</div>
-
 <div id="orderList"></div>
-
 </div>
-
 </div>
-
 
 <!-- PROFILE -->
 
 <div id="profile" class="page">
 
 <div class="card">
-
 <div class="title">👤 আমার প্রোফাইল</div>
 
-<input id="userName"
-placeholder="আপনার নাম">
-
-<input id="userPhone"
-placeholder="মোবাইল নম্বর">
+<input id="userName" placeholder="আপনার নাম">
+<input id="userPhone" placeholder="মোবাইল নম্বর">
 
 <p id="userEmail" class="small"></p>
 
-<button onclick="saveProfile()">
-তথ্য সংরক্ষণ
-</button>
-
+<button onclick="saveProfile()">তথ্য সংরক্ষণ</button>
 </div>
 
 <div class="card">
-
 <p>FN Telecom</p>
-
 <p>WhatsApp: 01640592773</p>
 
-<button onclick="window.open(
-'https://wa.me/8801640592773')">
-
+<button onclick="window.open('https://wa.me/8801640592773')">
 WhatsApp যোগাযোগ
-
 </button>
 
-<button class="logout"
-onclick="logoutUser()">
-
-Logout
-
-</button>
-
+<button class="logout" onclick="logoutUser()">Logout</button>
 </div>
 
 </div>
-
 
 <!-- ADMIN -->
 
 <div id="admin" class="page">
 
 <div class="card">
-
 <div class="title">⚙️ FN Telecom Admin</div>
 
-<h3>মোট অর্ডার:
-<span id="adminOrders">0</span>
-</h3>
-
+<h3>মোট অর্ডার: <span id="adminOrders">0</span></h3>
 <br>
-
-<h3>সম্পন্ন অর্ডার:
-<span id="adminSuccess">0</span>
-</h3>
-
+<h3>সম্পন্ন অর্ডার: <span id="adminSuccess">0</span></h3>
 </div>
-
 
 <div class="card">
 
 <div class="title">➕ নতুন অফার যোগ করুন</div>
 
 <select id="newOperator">
-
 <option>GP</option>
 <option>Banglalink</option>
 <option>Robi</option>
 <option>Airtel</option>
 <option>Teletalk</option>
-
 </select>
 
-<input id="newOfferName"
-placeholder="অফারের নাম">
+<input id="newOfferName" placeholder="অফারের নাম">
+<input id="newOfferPrice" type="number" min="0" placeholder="তোমার নির্ধারিত মূল্য">
+<input id="newOfferValidity" placeholder="মেয়াদ">
 
-<input id="newOfferPrice"
-type="number"
-placeholder="মূল্য">
-
-<input id="newOfferValidity"
-placeholder="মেয়াদ">
-
-<button onclick="addOffer()">
-অফার যোগ করুন
-</button>
+<button onclick="addOffer()">অফার যোগ করুন</button>
 
 </div>
 
-
 <div class="card">
-
 <div class="title">📦 অফার পরিচালনা</div>
-
 <div id="adminOfferList"></div>
-
 </div>
 
-
 <div class="card">
-
 <div class="title">📋 সকল কাস্টমার অর্ডার</div>
-
 <div id="adminOrderList"></div>
-
 </div>
-
 
 <div class="card">
-
 <div class="title">📢 নোটিশ পরিবর্তন</div>
-
-<input id="newNotice"
-placeholder="নতুন নোটিশ">
-
-<button onclick="updateNotice()">
-নোটিশ প্রকাশ
-</button>
-
-</div>
-
-
-<button class="logout"
-onclick="showPage('profile')">
-
-প্রোফাইলে ফিরে যান
-
-</button>
-
+<input id="newNotice" placeholder="নতুন নোটিশ">
+<button onclick="updateNotice()">নোটিশ প্রকাশ</button>
 </div>
 
 </div>
 
-
-<!-- MENU -->
+</div>
 
 <nav id="mainNav">
 
-<button onclick="showPage('home')">
-🏠<br>হোম
-</button>
+<button onclick="showPage('home')">🏠<br>হোম</button>
+<button onclick="showPage('offers')">📦<br>অফার</button>
+<button onclick="showPage('orders')">📋<br>অর্ডার</button>
+<button onclick="showPage('profile')">👤<br>প্রোফাইল</button>
 
-<button onclick="showPage('offers')">
-📦<br>অফার
-</button>
-
-<button onclick="showPage('orders')">
-📋<br>অর্ডার
-</button>
-
-<button onclick="showPage('profile')">
-👤<br>প্রোফাইল
-</button>
-
-<button id="adminMenu"
-style="display:none"
-onclick="showPage('admin')">
-
-⚙️<br>Admin
-
-</button>
+<button id="adminMenu" style="display:none"
+onclick="showPage('admin')">⚙️<br>Admin</button>
 
 </nav>
 
+</div>
 
 <script type="module">
 
-import {
-initializeApp
-} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import {initializeApp}
+from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 
 import {
 getAuth,
@@ -546,64 +354,53 @@ signInWithEmailAndPassword,
 onAuthStateChanged,
 signOut,
 sendEmailVerification
-} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+}
+from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
 
 import {
 getFirestore,
 collection,
 addDoc,
+getDoc,
 getDocs,
 query,
 where,
-orderBy,
 onSnapshot,
 doc,
 setDoc,
 updateDoc,
 deleteDoc,
 serverTimestamp
-} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+}
+from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
 
 /* FIREBASE CONFIG */
 
 const firebaseConfig = {
-
 apiKey: "AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",
-
 authDomain: "fahim-ahmad-telecom.firebaseapp.com",
-
 projectId: "fahim-ahmad-telecom",
-
 storageBucket: "fahim-ahmad-telecom.firebasestorage.app",
-
 messagingSenderId: "965841120853",
-
 appId: "1:965841120853:web:7fc6a75769a0fdfbd0eedc",
-
 measurementId: "G-N325EFWEXN"
-
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getFirestore(app);
 
 
-/* VARIABLES */
+/* ADMIN */
+
+const ADMIN_EMAIL = "faiyaazfahim608@gmail.com";
 
 let currentUser = null;
-
 let isAdmin = false;
-
 let offers = [];
-
 let orders = [];
-
-let selectedOperator = 'all';
+let selectedOffer = null;
 
 let unsubOffers = null;
 let unsubOrders = null;
@@ -611,54 +408,30 @@ let unsubAdminOrders = null;
 let unsubSettings = null;
 
 
-/* ELEMENTS */
-
-const authScreen =
-document.getElementById('authScreen');
-
-const appScreen =
-document.getElementById('appScreen');
-
-const message =
-document.getElementById('authMessage');
-
-
 /* REGISTER */
 
-document.getElementById('registerBtn')
-.onclick = async () => {
+document.getElementById('registerBtn').onclick = async()=>{
 
-try {
+try{
 
-let email =
-document.getElementById('email').value.trim();
+const email = document.getElementById('email').value.trim();
+const password = document.getElementById('password').value;
 
-let password =
-document.getElementById('password').value;
-
-if(!email || password.length < 6){
-
-message.innerText =
-'সঠিক Email এবং কমপক্ষে ৬ অক্ষরের Password দিন';
-
+if(!email || password.length<6){
+alert('সঠিক Email এবং কমপক্ষে ৬ অক্ষরের Password দিন');
 return;
-
 }
 
-let result =
-await createUserWithEmailAndPassword(
-auth,email,password
-);
+const result = await createUserWithEmailAndPassword(auth,email,password);
 
 await sendEmailVerification(result.user);
 
-message.innerText =
-'Account তৈরি হয়েছে। Email যাচাই করে Login করুন।';
+alert('Account তৈরি হয়েছে। Email যাচাই করে Login করুন।');
 
-} catch(error){
+await signOut(auth);
 
-message.innerText = error.message;
-
+}catch(e){
+alert(e.message);
 }
 
 };
@@ -666,218 +439,171 @@ message.innerText = error.message;
 
 /* LOGIN */
 
-document.getElementById('loginBtn')
-.onclick = async () => {
+document.getElementById('loginBtn').onclick = async()=>{
 
 try{
 
-let email =
-document.getElementById('email').value.trim();
+const email = document.getElementById('email').value.trim();
+const password = document.getElementById('password').value;
 
-let password =
-document.getElementById('password').value;
+await signInWithEmailAndPassword(auth,email,password);
 
-await signInWithEmailAndPassword(
-auth,email,password
-);
-
-message.innerText = '';
-
-}catch(error){
-
-message.innerText = error.message;
-
+}catch(e){
+alert(e.message);
 }
 
 };
 
 
-/* AUTH */
+/* AUTH STATE */
 
-onAuthStateChanged(auth, async user => {
+onAuthStateChanged(auth,async user=>{
 
-if(user){
+cleanup();
 
-currentUser = user;
+if(!user){
+
+currentUser=null;
+isAdmin=false;
+
+document.getElementById('authScreen').style.display='flex';
+document.getElementById('appScreen').style.display='none';
+
+return;
+
+}
 
 await user.reload();
 
-await user.getIdToken(true);
+currentUser=auth.currentUser;
 
 isAdmin =
-user.email === 'faiyaazfahim608@gmail.com'
-&& user.emailVerified;
+currentUser.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+&& currentUser.emailVerified;
 
-authScreen.style.display = 'none';
+if(!currentUser.emailVerified){
 
-appScreen.style.display = 'block';
-
-document.getElementById('userEmail')
-.innerText = user.email;
-
-document.getElementById('adminMenu')
-.style.display = isAdmin ? 'block' : 'none';
-
-loadData();
-
-showPage('home');
-
-}else{
-
-currentUser = null;
-
-isAdmin = false;
-
-cleanupListeners();
-
-authScreen.style.display = 'flex';
-
-appScreen.style.display = 'none';
+alert('প্রথমে Email Verification সম্পন্ন করুন।');
+await signOut(auth);
+return;
 
 }
+
+document.getElementById('authScreen').style.display='none';
+document.getElementById('appScreen').style.display='block';
+
+document.getElementById('userEmail').innerText=currentUser.email;
+
+document.getElementById('adminMenu').style.display=
+isAdmin?'block':'none';
+
+loadOffers();
+loadMyOrders();
+loadProfile();
+loadNotice();
+
+if(isAdmin){
+loadAdminOrders();
+}
+
+showPage('home');
 
 });
 
 
 /* CLEANUP */
 
-function cleanupListeners(){
+function cleanup(){
 
-[
-'unsubOffers',
-'unsubOrders',
-'unsubAdminOrders',
-'unsubSettings'
-].forEach(name => {
-
-if(window[name]){
-window[name]();
-window[name] = null;
-}
-
-});
+if(unsubOffers){unsubOffers();unsubOffers=null;}
+if(unsubOrders){unsubOrders();unsubOrders=null;}
+if(unsubAdminOrders){unsubAdminOrders();unsubAdminOrders=null;}
+if(unsubSettings){unsubSettings();unsubSettings=null;}
 
 }
 
-
-/* LOGOUT */
-
-window.logoutUser = async () => {
-
-await signOut(auth);
-
-};
+window.logoutUser=()=>signOut(auth);
 
 
 /* PAGE */
 
-window.showPage = function(id){
+window.showPage=function(id){
 
-if(id === 'admin' && !isAdmin){
-
+if(id==='admin' && !isAdmin){
 alert('Admin অনুমতি নেই');
-
 return;
-
 }
 
-document.querySelectorAll('.page')
-.forEach(p => p.classList.remove('active'));
+document.querySelectorAll('.page').forEach(p=>{
+p.classList.remove('active');
+});
 
-document.getElementById(id)
-.classList.add('active');
+document.getElementById(id).classList.add('active');
 
 };
 
 
-/* LOAD DATA */
+/* SAFE TEXT */
 
-function loadData(){
+function esc(v){
 
-cleanupListeners();
-
-loadOffers();
-
-loadMyOrders();
-
-loadProfile();
-
-loadNotice();
-
-if(isAdmin){
-
-loadAdminOrders();
-
-}
+return String(v??'').replace(/[&<>"']/g,c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+})[c]);
 
 }
 
 
-/* OFFERS */
+/* LOAD OFFERS */
 
 function loadOffers(){
 
-unsubOffers = onSnapshot(
-collection(db,'offers'),
+unsubOffers=onSnapshot(collection(db,'offers'),snapshot=>{
 
-snapshot => {
-
-offers = snapshot.docs.map(d => ({
+offers=snapshot.docs.map(d=>({
 id:d.id,
 ...d.data()
 }));
 
 renderOffers();
-
 renderHomeOffers();
 
-if(isAdmin) renderAdminOffers();
+if(isAdmin)renderAdminOffers();
 
-},
-
-error => alert('অফার লোড হয়নি: '+error.message)
-
-);
+},error=>alert('অফার লোড সমস্যা: '+error.message));
 
 }
 
 
 /* RENDER OFFERS */
 
-window.renderOffers = function(){
+window.renderOffers=function(){
 
-let filter =
-document.getElementById('operatorFilter').value;
+const filter=document.getElementById('operatorFilter').value;
 
-document.getElementById('offerList')
-.innerHTML = offers
+document.getElementById('offerList').innerHTML=
 
-.filter(o =>
-filter === 'all' ||
-o.operator === filter
-)
-
-.map(o => `
+offers.filter(o=>
+o.active!==false &&
+(filter==='all'||o.operator===filter)
+).map(o=>`
 
 <div class="offer">
 
-<h3>${escapeHTML(o.name)}</h3>
+<h3>${esc(o.name)}</h3>
+<p>অপারেটর: ${esc(o.operator)}</p>
+<p>মেয়াদ: ${esc(o.validity)}</p>
+<p><b>মূল্য: ৳${Number(o.price)}</b></p>
 
-<p>অপারেটর: ${escapeHTML(o.operator)}</p>
-
-<p>মেয়াদ: ${escapeHTML(o.validity)}</p>
-
-<p>মূল্য: ৳${Number(o.price)}</p>
-
-<button onclick="buyOffer('${o.id}')">
-
-অর্ডার করুন
-
-</button>
+<button onclick="buyOffer('${o.id}')">অর্ডার করুন</button>
 
 </div>
 
-`).join('') || 'কোনো অফার নেই।';
+`).join('')||'কোনো অফার নেই।';
 
 };
 
@@ -886,85 +612,74 @@ o.operator === filter
 
 function renderHomeOffers(){
 
-document.getElementById('homeOffers')
-.innerHTML = offers.slice(0,3)
+document.getElementById('homeOffers').innerHTML=
 
-.map(o => `
+offers.filter(o=>o.active!==false).slice(0,3).map(o=>`
 
 <div class="offer">
 
-<h3>${escapeHTML(o.name)}</h3>
-
-<p>${escapeHTML(o.operator)}</p>
-
+<h3>${esc(o.name)}</h3>
+<p>${esc(o.operator)}</p>
 <p>৳${Number(o.price)}</p>
 
-<button onclick="buyOffer('${o.id}')">
-অর্ডার করুন
-</button>
+<button onclick="buyOffer('${o.id}')">অর্ডার করুন</button>
 
 </div>
 
-`).join('') || 'কোনো অফার নেই।';
+`).join('')||'কোনো অফার নেই।';
 
 }
+
+
+/* OPERATOR */
+
+window.selectOperator=function(op){
+
+document.getElementById('operatorFilter').value=op;
+showPage('offers');
+
+};
 
 
 /* BUY OFFER */
 
-window.buyOffer = async function(id){
+window.buyOffer=async function(id){
 
-let offer = offers.find(o => o.id === id);
+const offer=offers.find(o=>o.id===id && o.active!==false);
 
-if(!offer) return;
+if(!offer)return;
 
-let phone =
-document.getElementById('mobile').value.trim();
+const phone=document.getElementById('mobile').value.trim();
 
 if(!/^01[3-9]\d{8}$/.test(phone)){
-
-alert('সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন');
-
+alert('সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন।');
 showPage('home');
-
 return;
-
 }
 
-if(!confirm(
-offer.name+' অর্ডার করবেন?'
-)) return;
+if(!confirm(offer.name+' অর্ডার করবেন?'))return;
 
 try{
 
 await addDoc(collection(db,'orders'),{
 
 userId:currentUser.uid,
-
 userEmail:currentUser.email,
-
+offerId:id,
 offer:offer.name,
-
 operator:offer.operator,
-
 phone:phone,
-
 price:Number(offer.price),
-
 status:'Pending',
-
 createdAt:serverTimestamp()
 
 });
 
 alert('অর্ডার সফলভাবে জমা হয়েছে!');
-
 showPage('orders');
 
-}catch(error){
-
-alert('অর্ডার জমা হয়নি: '+error.message);
-
+}catch(e){
+alert('অর্ডার জমা হয়নি: '+e.message);
 }
 
 };
@@ -974,66 +689,47 @@ alert('অর্ডার জমা হয়নি: '+error.message);
 
 function loadMyOrders(){
 
-let q = query(
-
+const q=query(
 collection(db,'orders'),
-
-where('userId','==',currentUser.uid),
-
-orderBy('createdAt','desc')
-
+where('userId','==',currentUser.uid)
 );
 
-unsubOrders = onSnapshot(q,snapshot => {
+unsubOrders=onSnapshot(q,snapshot=>{
 
-orders = snapshot.docs.map(d => ({
+orders=snapshot.docs.map(d=>({
 id:d.id,
 ...d.data()
 }));
 
+orders.sort((a,b)=>
+(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)
+);
+
 renderMyOrders();
 
-},error => {
-
-console.error(error);
-
-});
+},error=>console.error(error));
 
 }
 
 
 function renderMyOrders(){
 
-document.getElementById('orderList')
-.innerHTML = orders.map(o => `
+document.getElementById('orderList').innerHTML=
+
+orders.map(o=>`
 
 <div class="item">
 
-<b>${escapeHTML(o.offer)}</b>
+<b>${esc(o.offer)}</b><br>
+অপারেটর: ${esc(o.operator)}<br>
+নম্বর: ${esc(o.phone)}<br>
+মূল্য: ৳${Number(o.price)}<br>
 
-<br>
-
-অপারেটর: ${escapeHTML(o.operator)}
-
-<br>
-
-নম্বর: ${escapeHTML(o.phone)}
-
-<br>
-
-মূল্য: ৳${Number(o.price)}
-
-<br>
-
-অবস্থা:
-
-<span class="status">
-${escapeHTML(o.status)}
-</span>
+অবস্থা: <span class="status">${esc(o.status)}</span>
 
 </div>
 
-`).join('') || 'এখনো কোনো অর্ডার নেই।';
+`).join('')||'এখনো কোনো অর্ডার নেই।';
 
 }
 
@@ -1042,109 +738,74 @@ ${escapeHTML(o.status)}
 
 function loadAdminOrders(){
 
-unsubAdminOrders = onSnapshot(
+if(!isAdmin)return;
 
-query(
-collection(db,'orders'),
-orderBy('createdAt','desc')
-),
+unsubAdminOrders=onSnapshot(collection(db,'orders'),snapshot=>{
 
-snapshot => {
-
-let all = snapshot.docs.map(d => ({
+const all=snapshot.docs.map(d=>({
 id:d.id,
 ...d.data()
 }));
 
-document.getElementById('adminOrders')
-.innerText = all.length;
+all.sort((a,b)=>
+(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)
+);
 
-document.getElementById('adminSuccess')
-.innerText = all.filter(
-o => o.status === 'Successful'
-).length;
+document.getElementById('adminOrders').innerText=all.length;
 
-document.getElementById('adminOrderList')
-.innerHTML = all.map(o => `
+document.getElementById('adminSuccess').innerText=
+all.filter(o=>o.status==='Successful').length;
+
+document.getElementById('adminOrderList').innerHTML=
+
+all.map(o=>`
 
 <div class="item">
 
-<b>${escapeHTML(o.offer)}</b>
+<b>${esc(o.offer)}</b><br>
+কাস্টমার: ${esc(o.userEmail)}<br>
+মোবাইল: <b>${esc(o.phone)}</b><br>
+অপারেটর: ${esc(o.operator)}<br>
+মূল্য: ৳${Number(o.price)}<br>
+অবস্থা: ${esc(o.status)}<br>
 
-<br>
-
-কাস্টমার: ${escapeHTML(o.userEmail)}
-
-<br>
-
-মোবাইল: <b>${escapeHTML(o.phone)}</b>
-
-<br>
-
-অপারেটর: ${escapeHTML(o.operator)}
-
-<br>
-
-মূল্য: ৳${Number(o.price)}
-
-<br>
-
-অবস্থা: ${escapeHTML(o.status)}
-
-<br>
-
-${o.status === 'Pending' ? `
+${o.status==='Pending'?`
 
 <button onclick="changeOrder('${o.id}','Successful')">
-Successful
+MB পাঠানো হয়েছে - Confirm
 </button>
 
-<button class="danger"
-onclick="changeOrder('${o.id}','Cancelled')">
-Cancelled
+<button class="danger" onclick="changeOrder('${o.id}','Cancelled')">
+Cancel
 </button>
 
-` : ''}
+`:''}
 
 </div>
 
-`).join('') || 'কোনো অর্ডার নেই।';
+`).join('')||'কোনো অর্ডার নেই।';
 
-},
-
-error => alert('Admin Order Error: '+error.message)
-
-);
+},error=>alert('অর্ডার লোড সমস্যা: '+error.message));
 
 }
 
 
-/* CHANGE ORDER */
+/* UPDATE ORDER */
 
-window.changeOrder = async function(id,status){
+window.changeOrder=async function(id,status){
 
-if(!isAdmin){
+if(!isAdmin)return alert('অনুমতি নেই');
 
-alert('অনুমতি নেই');
-
-return;
-
-}
+if(!confirm('অর্ডারের অবস্থা পরিবর্তন করবেন?'))return;
 
 try{
 
-await updateDoc(doc(db,'orders',id),{
-
-status:status
-
-});
+await updateDoc(doc(db,'orders',id),{status});
 
 alert('অর্ডার আপডেট হয়েছে');
 
-}catch(error){
-
-alert(error.message);
-
+}catch(e){
+alert(e.message);
 }
 
 };
@@ -1152,28 +813,19 @@ alert(error.message);
 
 /* ADD OFFER */
 
-window.addOffer = async function(){
+window.addOffer=async function(){
 
-if(!isAdmin) return;
+if(!isAdmin)return;
 
-let name =
-document.getElementById('newOfferName').value.trim();
+const name=document.getElementById('newOfferName').value.trim();
+const priceInput=document.getElementById('newOfferPrice').value;
+const price=Number(priceInput);
+const validity=document.getElementById('newOfferValidity').value.trim();
+const operator=document.getElementById('newOperator').value;
 
-let price =
-Number(document.getElementById('newOfferPrice').value);
-
-let validity =
-document.getElementById('newOfferValidity').value.trim();
-
-let operator =
-document.getElementById('newOperator').value;
-
-if(!name || price <= 0 || !validity){
-
-alert('সব তথ্য পূরণ করুন');
-
+if(!name||priceInput===''||!Number.isFinite(price)||price<0||!validity){
+alert('সব তথ্য সঠিকভাবে পূরণ করুন।');
 return;
-
 }
 
 try{
@@ -1184,22 +836,19 @@ name,
 price,
 validity,
 operator,
+active:true,
 createdAt:serverTimestamp()
 
 });
 
 document.getElementById('newOfferName').value='';
-
 document.getElementById('newOfferPrice').value='';
-
 document.getElementById('newOfferValidity').value='';
 
-alert('নতুন অফার যোগ হয়েছে');
+alert('নতুন অফার যোগ হয়েছে!');
 
-}catch(error){
-
-alert(error.message);
-
+}catch(e){
+alert(e.message);
 }
 
 };
@@ -1209,53 +858,110 @@ alert(error.message);
 
 function renderAdminOffers(){
 
-document.getElementById('adminOfferList')
-.innerHTML = offers.map(o => `
+document.getElementById('adminOfferList').innerHTML=
 
-<div class="item">
+offers.map(o=>`
 
-${escapeHTML(o.name)}
+<div class="offer">
 
-<br>
+<h3>${esc(o.name)}</h3>
+<p>অপারেটর: ${esc(o.operator)}</p>
+<p>দাম: ৳${Number(o.price)}</p>
+<p>মেয়াদ: ${esc(o.validity)}</p>
+<p>অবস্থা: ${o.active===false?'বন্ধ':'চালু'}</p>
 
-${escapeHTML(o.operator)}
+<button class="blue" onclick="editOffer('${o.id}')">সম্পাদনা</button>
 
-<br>
-
-৳${Number(o.price)}
-
-<button class="danger"
-onclick="deleteOffer('${o.id}')">
-
-ডিলিট
-
+<button class="orange" onclick="toggleOffer('${o.id}',${o.active===false})">
+${o.active===false?'চালু করুন':'বন্ধ করুন'}
 </button>
+
+<button class="danger" onclick="deleteOffer('${o.id}')">ডিলিট</button>
 
 </div>
 
-`).join('') || 'কোনো অফার নেই।';
+`).join('')||'কোনো অফার নেই।';
 
 }
 
 
+/* EDIT OFFER */
+
+window.editOffer=async function(id){
+
+if(!isAdmin)return;
+
+const o=offers.find(x=>x.id===id);
+if(!o)return;
+
+const name=prompt('অফারের নাম:',o.name);
+if(name===null)return;
+
+const priceText=prompt('নতুন দাম:',o.price);
+if(priceText===null)return;
+
+const price=Number(priceText);
+
+if(!name.trim()||priceText.trim()===''||!Number.isFinite(price)||price<0){
+alert('সঠিক তথ্য দিন।');
+return;
+}
+
+const validity=prompt('মেয়াদ:',o.validity);
+if(validity===null)return;
+
+try{
+
+await updateDoc(doc(db,'offers',id),{
+name:name.trim(),
+price,
+validity:validity.trim()
+});
+
+alert('অফার পরিবর্তন হয়েছে');
+
+}catch(e){
+alert(e.message);
+}
+
+};
+
+
+/* TOGGLE OFFER */
+
+window.toggleOffer=async function(id,value){
+
+if(!isAdmin)return;
+
+try{
+
+await updateDoc(doc(db,'offers',id),{
+active:value
+});
+
+}catch(e){
+alert(e.message);
+}
+
+};
+
+
 /* DELETE OFFER */
 
-window.deleteOffer = async function(id){
+window.deleteOffer=async function(id){
 
-if(!isAdmin) return;
+if(!isAdmin)return;
 
-if(!confirm('অফার মুছে ফেলবেন?')) return;
+if(!confirm('অফার ডিলিট করবেন?'))return;
 
 try{
 
 await deleteDoc(doc(db,'offers',id));
 
-alert('অফার মুছে ফেলা হয়েছে');
+alert('অফার ডিলিট হয়েছে');
 
-}catch(error){
-
-alert(error.message);
-
+}catch(e){
+alert(e.message);
 }
 
 };
@@ -1265,54 +971,42 @@ alert(error.message);
 
 async function loadProfile(){
 
-let ref = doc(db,'users',currentUser.uid);
+try{
 
-let snap = await getDoc(ref);
+const snap=await getDoc(doc(db,'users',currentUser.uid));
 
 if(snap.exists()){
 
-let data = snap.data();
+const data=snap.data();
 
-document.getElementById('userName').value =
-data.name || '';
+document.getElementById('userName').value=data.name||'';
+document.getElementById('userPhone').value=data.phone||'';
 
-document.getElementById('userPhone').value =
-data.phone || '';
+}
 
+}catch(e){
+console.error(e);
 }
 
 }
 
 
-window.saveProfile = async function(){
-
-let name =
-document.getElementById('userName').value.trim();
-
-let phone =
-document.getElementById('userPhone').value.trim();
+window.saveProfile=async function(){
 
 try{
 
-await setDoc(
-doc(db,'users',currentUser.uid),
+await setDoc(doc(db,'users',currentUser.uid),{
 
-{
-name,
-phone,
+name:document.getElementById('userName').value.trim(),
+phone:document.getElementById('userPhone').value.trim(),
 email:currentUser.email
-},
 
-{merge:true}
-
-);
+},{merge:true});
 
 alert('প্রোফাইল সংরক্ষিত হয়েছে');
 
-}catch(error){
-
-alert(error.message);
-
+}catch(e){
+alert(e.message);
 }
 
 };
@@ -1322,75 +1016,35 @@ alert(error.message);
 
 function loadNotice(){
 
-unsubSettings = onSnapshot(
-doc(db,'settings','notice'),
+unsubSettings=onSnapshot(doc(db,'settings','notice'),snap=>{
 
-snap => {
+document.getElementById('notice').innerText=
+snap.exists()?snap.data().text:'FN Telecom-এ আপনাকে স্বাগতম।';
 
-document.getElementById('notice')
-.innerText = snap.exists()
-? snap.data().text
-: 'FN Telecom-এ আপনাকে স্বাগতম।';
-
-}
-
-);
-
+},error=>console.error(error));
 
 }
 
 
-window.updateNotice = async function(){
+window.updateNotice=async function(){
 
-if(!isAdmin) return;
+if(!isAdmin)return;
 
-let text =
-document.getElementById('newNotice').value.trim();
+const text=document.getElementById('newNotice').value.trim();
 
-if(!text) return alert('নোটিশ লিখুন');
+if(!text)return alert('নোটিশ লিখুন');
 
 try{
 
-await setDoc(
-doc(db,'settings','notice'),
-{text}
-);
+await setDoc(doc(db,'settings','notice'),{text});
+
+document.getElementById('newNotice').value='';
 
 alert('নোটিশ প্রকাশ হয়েছে');
 
-}catch(error){
-
-alert(error.message);
-
+}catch(e){
+alert(e.message);
 }
-
-};
-
-
-/* HTML SECURITY */
-
-function escapeHTML(v){
-
-return String(v ?? '').replace(/[&<>"']/g,c=>({
-
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#39;'
-
-})[c]);
-
-}
-
-
-/* OPERATOR */
-
-window.selectOperator = function(op){
-
-document.getElementById('operatorFilter').value = op;
-
-showPage('offers');
 
 };
 
