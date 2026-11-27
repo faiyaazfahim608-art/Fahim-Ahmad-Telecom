@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -126,8 +128,4 @@ function loadAdminBalanceRequests(){unsubs.push(onSnapshot(query(collection(db,"
 window.reviewBalanceRequest=async(id,action)=>{if(!isAdmin)return alert("Admin অনুমতি নেই");const note=action==="approve"?"পেমেন্ট যাচাই করে অনুমোদন করছেন?":"আবেদন Reject করবেন?";if(!confirm(note))return;try{const fn=httpsCallable(functions,"reviewBalanceRequest");const result=await fn({requestId:id,action});alert(result.data.message||"সম্পন্ন")}catch(e){alert("কাজটি হয়নি: "+(e.message||e))}};
 function loadAdminOrders(){unsubs.push(onSnapshot(query(collection(db,"orders"),orderBy("createdAt","desc")),s=>{const all=s.docs.map(d=>({id:d.id,...d.data()}));$("adminOrders").innerText=all.length;$("adminSuccess").innerText=all.filter(o=>o.status==="Successful").length;$("adminOrderList").innerHTML=all.map(o=>`<div class="item"><b>${esc(o.offer)}</b><br>কাস্টমার: ${esc(o.userEmail)}<br>মোবাইল: ${esc(o.phone)}<br>অপারেটর: ${esc(o.operator)}<br>মূল্য: ৳${money(o.price)}<br>অবস্থা: ${esc(o.status)}<br>${o.status==="Pending"?`<button onclick="changeOrder('${o.id}','Successful')">Successful</button><button class="danger" onclick="changeOrder('${o.id}','Cancelled')">Cancelled</button>`:""}</div>`).join("")||"কোনো অর্ডার নেই।"},e=>alert("Admin Order Error: "+e.message)))}
 window.changeOrder=async(id,status)=>{if(!isAdmin)return alert("অনুমতি নেই");try{await updateDoc(doc(db,"orders",id),{status});alert("অর্ডার আপডেট হয়েছে")}catch(e){alert(e.message)}};
-window.addOffer=async()=>{if(!isAdmin)return;const name=$("newOfferName").value.trim(),price=Number($("newOfferPrice").value),validity=$("newOfferValidity").value.trim(),operator=$("newOperator").value;if(!name||price<=0||!validity)return alert("সব তথ্য পূরণ করুন");try{await addDoc(collection(db,"offers"),{name,price,validity,operator,createdAt:serverTimestamp()});$("newOfferName").value=$("newOfferPrice").value=$("newOfferValidity").value="";alert("নতুন অফার যোগ হয়েছে")}catch(e){alert(e.message)}};
-function renderAdminOffers(){$("adminOfferList").innerHTML=offers.map(o=>`<div class="item">${esc(o.name)} · ${esc(o.operator)} · ৳${money(o.price)}<br><button class="danger" onclick="deleteOffer('${o.id}')">ডিলিট</button></div>`).join("")||"কোনো অফার নেই।"}
-window.deleteOffer=async id=>{if(!isAdmin||!confirm("অফার মুছে ফেলবেন?"))return;try{await deleteDoc(doc(db,"offers",id));alert("অফার মুছে ফেলা হয়েছে")}catch(e){alert(e.message)}};
-</script>
-</body></html>
+window.addOffer=async()=>{if(!isAdmin)return;const name=$("newOfferName").value.trim(),price=Number($("newOfferPrice").value),validity=$("newOfferValidity").value.trim(),operator=$("newOperator").value;if(!name||p
