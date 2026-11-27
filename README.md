@@ -1,231 +1,125 @@
-<!doctype html>
-<html lang="bn">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07110b">
-<title>FN Telecom Demo</title>
-<style>
-:root{--bg:#07110b;--panel:#102219;--green:#19c463;--line:#294936;--text:#f5fff8;--muted:#a8b9ad}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#07110b,#10251a);color:var(--text);font-family:system-ui,"Noto Sans Bengali",sans-serif}
-.wrap{max-width:560px;margin:auto;min-height:100vh;padding:16px}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 18px}
-.brand{display:flex;align-items:center;gap:10px}.logo{width:46px;height:46px;border-radius:14px;background:var(--green);color:#062111;display:grid;place-items:center;font-weight:900}
-h1{font-size:21px;margin:0}header small{color:var(--muted)}
-button,input,select{font:inherit}.btn{border:0;border-radius:10px;background:var(--green);color:#062111;font-weight:750;padding:10px 13px;cursor:pointer}
-.btn.secondary{background:#1b3827;color:var(--text);border:1px solid var(--line)}
-.hero{background:linear-gradient(120deg,#126b3b,#0d2b1a);border:1px solid #237b4a;border-radius:18px;padding:17px;margin-bottom:16px}
-.hero strong{font-size:19px}.hero p{margin:5px 0 0;color:#d7f5e2;font-size:13px}
-h2{font-size:16px;margin:18px 0 10px}
-.operators{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
-.operator{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 2px;text-align:center;color:var(--text);font-size:12px;cursor:pointer}
-.operator b{display:block;font-size:17px;color:var(--green);margin-bottom:3px}.operator.active{border:2px solid var(--green);background:#173b27}
-.tabs{display:flex;gap:7px;margin:10px 0}.tab{flex:1;padding:9px 3px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px}.tab.active{background:var(--green);color:#062111;font-weight:700}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin:9px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.card h3{font-size:14px;margin:0 0 4px}.muted{font-size:12px;color:var(--muted);margin:0}
-.price{color:#7af0a8;font-weight:800;font-size:17px;text-align:right}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
-label{display:block;font-size:13px;color:#d7e9dc;margin:10px 0 5px}
-input,select{width:100%;padding:11px;border-radius:10px;border:1px solid #42614c;background:#08170e;color:var(--text)}
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
-.hidden{display:none!important}.notice{font-size:12px;color:#c4d5c9;line-height:1.6;background:#0b1b12;padding:11px;border-radius:10px;margin:12px 0}
-footer{text-align:center;color:#7f9888;font-size:11px;padding:22px 0}
-</style></head>
-<body><div class="wrap">
-<header><div class="brand"><div class="logo">FN</div><div><h1>FN Telecom</h1><small>সব অপারেটরের অফার এক জায়গায়</small></div></div><button class="btn secondary" id="adminToggle">অ্যাডমিন</button></header>
-<section id="customer">
-<div class="hero"><strong>আপনার পছন্দের প্যাকেজ বেছে নিন</strong><p>ইন্টারনেট • মিনিট • কম্বো অফার</p></div>
-<h2>অপারেটর নির্বাচন করুন</h2><div class="operators" id="operators"></div>
-<h2>প্যাকেজের ধরন</h2><div class="tabs" id="tabs"></div>
-<h2 id="offerHeading">অফারসমূহ</h2><div id="offerList"></div>
-<div class="notice">এটি পরীক্ষামূলক ডেমো। অর্ডার বাটন শুধু নমুনা অর্ডার দেখায়; কোনো টাকা কাটা বা রিচার্জ হয় না।</div>
-</section>
-<section id="admin" class="hidden">
-<div class="hero"><strong>অ্যাডমিন প্যানেল</strong><p>অফার যোগ, পরিবর্তন ও মুছে ফেলুন</p></div>
-<div class="notice">ডেমো PIN: <b>1234</b>। এটি নিরাপদ লগইন নয়—শুধু পরীক্ষার জন্য। এই ফাইলে যোগ করা অফার এই ফোনের ব্রাউজারেই সংরক্ষিত হবে।</div>
-<div id="loginBox" class="panel"><label>অ্যাডমিন PIN</label><input id="pin" inputmode="numeric" type="password" placeholder="ডেমো PIN লিখুন"><div class="actions"><button class="btn" id="loginBtn">লগইন</button><button class="btn secondary" id="backBtn">গ্রাহক পেজ</button></div></div>
-<div id="adminArea" class="hidden">
-<div class="panel">
-<h2 style="margin-top:0">নতুন অফার যোগ করুন</h2>
-<label>অপারেটর</label><select id="newOp"><option>GP</option><option>Banglalink</option><option>Robi</option><option>Airtel</option><option>Teletalk</option></select>
-<label>প্যাকেজের ধরন</label><select id="newType"><option>ইন্টারনেট</option><option>মিনিট</option><option>কম্বো</option></select>
-<label>অফারের নাম</label><input id="newName" placeholder="যেমন: ১০ GB ইন্টারনেট">
-<div class="formgrid"><div><label>দাম (টাকা)</label><input id="newPrice" type="number" min="0" placeholder="যেমন: ১৯৯"></div><div><label>মেয়াদ/বিবরণ</label><input id="newDetail" placeholder="যেমন: ৩০ দিন"></div></div>
-<button class="btn" id="addBtn" style="width:100%;margin-top:13px">অফার যোগ করুন</button>
-</div>
-<h2>বর্তমান অফার পরিচালনা</h2><div id="manageList"></div>
-<div class="actions"><button class="btn secondary" id="logoutBtn">লগআউট</button><button class="btn secondary" id="resetBtn">নমুনা অফার ফিরিয়ে আনুন</button><button class="btn secondary" id="customerBtn">গ্রাহক পেজ</button></div>
-</div></section>
-<footer>© FN Telecom • Demo version</footer></div>
-<script>
-const operators=['GP','Banglalink','Robi','Airtel','Teletalk'], types=['ইন্টারনেট','মিনিট','কম্বো'];
-const defaults=[];
-operators.forEach(op=>{
- defaults.push({op,type:'ইন্টারনেট',name:'৫ GB ইন্টারনেট',price:99,detail:'নমুনা ৭ দিন'});
- defaults.push({op,type:'ইন্টারনেট',name:'১০ GB ইন্টারনেট',price:199,detail:'নমুনা ৩০ দিন'});
- defaults.push({op,type:'মিনিট',name:'১০০ মিনিট',price:79,detail:'নমুনা ৭ দিন'});
- defaults.push({op,type:'কম্বো',name:'৫ GB + ১০০ মিনিট',price:249,detail:'নমুনা ৩০ দিন'});
-});
-let offers=JSON.parse(localStorage.getItem('fnOffers')||'null')||defaults;
-let currentOp='GP',currentType='ইন্টারনেট',logged=false;
-const save=()=>localStorage.setItem('fnOffers',JSON.stringify(offers));
-function renderSelectors(){
- document.getElementById('operators').innerHTML=operators.map(o=>`<button class="operator ${o===currentOp?'active':''}" data-op="${o}"><b>${o==='Banglalink'?'BL':o[0]}</b>${o}</button>`).join('');
- document.querySelectorAll('[data-op]').forEach(b=>b.onclick=()=>{currentOp=b.dataset.op;render()});
- document.getElementById('tabs').innerHTML=types.map(t=>`<button class="tab ${t===currentType?'active':''}" data-type="${t}">${t}</button>`).join('');
- document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{currentType=b.dataset.type;render()});
-}
-function renderCustomer(){
- const found=offers.filter(x=>x.op===currentOp&&x.type===currentType);
- document.getElementById('offerHeading').textContent=currentOp+' — '+currentType+' অফার';
- document.getElementById('offerList').innerHTML=found.length?found.map(x=>`<div class="card"><div><h3>${esc(x.name)}</h3><p class="muted">${esc(x.detail||'')}</p></div><div><div class="price">৳ ${Number(x.price).toLocaleString('bn-BD')}</div><button class="btn" onclick="orderDemo('${escJs(x.name)}')">অর্ডার</button></div></div>`).join(''):'<p class="muted">এই বিভাগে এখনো কোনো অফার যোগ করা হয়নি।</p>';
-}
-function renderManage(){
- document.getElementById('manageList').innerHTML=offers.length?offers.map((x,i)=>`<div class="card"><div><h3>${esc(x.op)} • ${esc(x.name)}</h3><p class="muted">${esc(x.type)} | ৳ ${x.price} | ${esc(x.detail||'')}</p></div><div class="actions"><button class="btn secondary" onclick="editOffer(${i})">এডিট</button><button class="btn secondary" onclick="deleteOffer(${i})">মুছুন</button></div></div>`).join(''):'<p class="muted">কোনো অফার নেই।</p>';
-}
-function render(){renderSelectors();renderCustomer();if(logged)renderManage()}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function escJs(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}
-function order(name){const phone=prompt('যে নম্বরে অফার নিতে চান, সেই নম্বর লিখুন:');if(phone)alert('ডেমো অর্ডার গ্রহণের নমুনা: '+currentOp+' / '+name+' / '+phone+'. বাস্তব পেমেন্ট বা রিচার্জ হয়নি।')}
-window.orderDemo=order;
-window.deleteOffer=i=>{if(confirm('এই অফারটি মুছে ফেলবেন?')){offers.splice(i,1);save();render()}};
-window.editOffer=i=>{let x=offers[i];let n=prompt('অফারের নাম',x.name);if(n===null)return;let p=prompt('দাম (টাকা)',x.price);if(p===null)return;if(!n.trim()||p.trim()===''||isNaN(Number(p))||Number(p)<0){alert('সঠিক নাম ও দাম লিখুন।');return}let d=prompt('মেয়াদ/বিবরণ',x.detail||'');if(d===null)return;offers[i]={...x,name:n.trim(),price:Number(p),detail:d.trim()};save();render()};
-document.getElementById('adminToggle').onclick=()=>{document.getElementById('customer').classList.add('hidden');document.getElementById('admin').classList.remove('hidden');document.getElementById('adminArea').classList.add('hidden');document.getElementById('loginBox').classList.remove('hidden');document.getElementById('pin').value='';logged=false};
-document.getElementById('loginBtn').onclick=()=>{if(document.getElementById('pin').value==='1234'){logged=true;document.getElementById('loginBox').classList.add('hidden');document.getElementById('adminArea').classList.remove('hidden');renderManage()}else alert('PIN সঠিক নয়। ডেমো PIN: 1234')};
-function showCustomer(){document.getElementById('admin').classList.add('hidden');document.getElementById('customer').classList.remove('hidden')}
-document.getElementById('backBtn').onclick=showCustomer;document.getElementById('customerBtn').onclick=showCustomer;
-document.getElementById('logoutBtn').onclick=()=>{logged=false;document.getElementById('adminArea').classList.add('hidden');document.getElementById('loginBox').classList.remove('hidden')};
-document.getElementById('addBtn').onclick=()=>{let name=document.getElementById('newName').value.trim(),price=document.getElementById('newPrice').value,detail=document.getElementById('newDetail').value.trim();if(!name||price===''||!Number.isFinite(Number(price))||Number(price)<0){alert('অফারের নাম ও সঠিক দাম দিন।');return}offers.push({op:document.getElementById('newOp').value,type:document.getElementById('newType').value,name,price:Number(price),detail});save();document.getElementById('newName').value='';document.getElementById('newPrice').value='';document.getElementById('newDetail').value='';render();alert('অফার যোগ হয়েছে।')};
-document.getElementById('resetBtn').onclick=()=>{if(confirm('সব পরিবর্তন মুছে নমুনা অফার ফিরিয়ে আনবেন?')){offers=defaults.map(x=>({...x}));save();render()}};
-render();
-</script></body></html>
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087b4e">
 <title>FN Telecom</title>
 <style>
-:root{--green:#087b4e;--deep:#063d2b;--mint:#eaf7ef;--ink:#173629;--muted:#718078;--line:#e3eee7;--white:#fff;--shadow:0 10px 28px #073d2812}
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,-apple-system,Arial,sans-serif;background:#f3f7f4;color:var(--ink);line-height:1.5}button,input,select{font:inherit}button{border:0;padding:12px 16px;border-radius:12px;background:var(--green);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:.18s}button:active{transform:scale(.98)}button:disabled{opacity:.55;cursor:not-allowed}input,select{width:100%;padding:13px 14px;margin:7px 0;border:1px solid #dce8df;border-radius:12px;font-size:15px;background:#fff;color:var(--ink);outline:none}input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px #087b4e18}label{display:block;font-size:13px;font-weight:650;margin-top:8px;color:#496256}
-#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at top right,#15965e 0,#0b6844 32%,#042e21 100%)}.auth-card{width:100%;max-width:410px;background:white;padding:30px 24px;border-radius:24px;text-align:center;box-shadow:0 24px 70px #001b1080}.auth-logo{width:66px;height:66px;margin:0 auto 12px;border-radius:20px;background:linear-gradient(135deg,#0c9a5c,#045332);color:white;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 8px 20px #087b4e35}.auth-card h2{color:var(--deep);font-size:25px;margin:8px}.auth-card>p{color:var(--muted);font-size:13px}.auth-card button{width:100%;margin-top:9px}#registerBtn{background:#eaf5ee;color:var(--deep)}#authMessage{margin-top:13px;color:#c33;overflow-wrap:anywhere;font-size:13px}
-#appScreen{display:none;padding-bottom:88px}header{background:linear-gradient(120deg,#053b29,#087b4e);color:white;padding:22px 18px 25px;text-align:center;border-radius:0 0 24px 24px;box-shadow:0 8px 24px #063d2b25}header h1{font-size:25px;letter-spacing:.3px}header p{font-size:13px;color:#d6f3e2;margin-top:3px}.container{max-width:680px;margin:auto;padding:16px}.card{background:var(--white);padding:18px;border:1px solid var(--line);border-radius:18px;margin-bottom:15px;box-shadow:var(--shadow)}.title{font-size:17px;font-weight:800;margin-bottom:13px;color:var(--deep)}.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.operator{background:var(--mint);border:1px solid #d9eee0;padding:17px 5px;border-radius:14px;text-align:center;cursor:pointer;font-weight:750;color:var(--deep)}.operator span{display:block;font-size:24px;margin-bottom:6px}.offer{padding:14px;border:1px solid var(--line);border-radius:14px;margin-bottom:11px;background:linear-gradient(120deg,#fff,#fbfefc)}.offer h3{color:var(--green);margin-bottom:6px;font-size:16px}.offer p{font-size:13px;color:#596c61;margin:3px 0}.offer button{margin-top:9px;min-width:125px}.item{padding:13px 2px;border-bottom:1px solid #edf2ee;font-size:13px;line-height:1.8;overflow-wrap:anywhere}.item:last-child{border-bottom:0}.small{font-size:12px;color:var(--muted)}nav{position:fixed;bottom:0;left:0;width:100%;display:flex;justify-content:space-around;gap:2px;background:#ffffffed;backdrop-filter:blur(12px);padding:8px 3px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -5px 22px #00000012;z-index:10;border-top:1px solid var(--line)}nav button{background:transparent;color:#365747;font-size:10px;padding:6px 4px;min-width:0;flex:1;line-height:1.4}nav button:active{background:var(--mint)}.danger{background:#d93636}.blue{background:#0755aa}.logout{background:#d93636;width:100%;margin-top:10px}.status{color:var(--green);font-weight:bold}.balance{font-size:30px;font-weight:850;color:var(--green);margin:8px 0}.muted{color:var(--muted);font-size:12px;line-height:1.6}.payment-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}.payment-options span{padding:10px 4px;border-radius:12px;background:#fff4f5;border:1px solid #f6dfe3;text-align:center;font-weight:800;color:#b31f50;font-size:12px}.payment-options span:nth-child(2){background:#fff8ed;border-color:#f6e7cb;color:#a85a00}.payment-options span:nth-child(3){background:#f3efff;border-color:#e4dcff;color:#6338a5}.hero-note{padding:12px;border-radius:12px;background:var(--mint);font-size:12px;color:#365747;margin-top:10px}
-@media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
+:root{--g:#087b4e;--d:#063d2b;--mint:#eaf7ef;--ink:#173629;--muted:#718078;--line:#e3eee7}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:#f3f7f4;color:var(--ink);padding-bottom:78px}
+header{background:linear-gradient(120deg,#053b29,#087b4e);color:white;padding:23px 16px;text-align:center;border-radius:0 0 23px 23px}
+header h1{margin:0;font-size:25px}header p{margin:4px 0 0;color:#d6f3e2;font-size:13px}
+main{max-width:680px;margin:auto;padding:15px}.card{background:white;padding:17px;border:1px solid var(--line);border-radius:17px;margin-bottom:14px;box-shadow:0 8px 24px #073d2810}
+h2{font-size:17px;color:var(--d);margin:0 0 13px}input,select,textarea{width:100%;padding:12px 13px;margin:6px 0;border:1px solid #dce8df;border-radius:11px;font:inherit;background:white;color:var(--ink)}
+textarea{min-height:95px;resize:vertical}button{border:0;padding:11px 15px;border-radius:11px;background:var(--g);color:white;font-weight:700;font:inherit;cursor:pointer}button.secondary{background:#eaf5ee;color:var(--d)}button.red{background:#c93636}button:disabled{opacity:.55}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.operator{padding:15px 6px;text-align:center;border:1px solid #d9eee0;border-radius:13px;background:var(--mint);font-weight:750;cursor:pointer}
+.offer,.entry{padding:12px 2px;border-bottom:1px solid #edf2ee;font-size:14px;line-height:1.7}.offer:last-child,.entry:last-child{border:0}.offer strong{color:var(--g)}.tag{display:inline-block;padding:2px 8px;border-radius:20px;background:var(--mint);color:var(--g);font-size:12px;font-weight:700}
+nav{position:fixed;bottom:0;left:0;width:100%;display:flex;gap:3px;background:#ffffffed;padding:8px 3px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px #0001;z-index:5}
+nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7px 2px}
+.page{display:none}.page.active{display:block}.hint{font-size:12px;color:var(--muted)}.hidden{display:none!important}
 </style>
 </head>
 <body>
-<div id="authScreen"><div class="auth-card">
-<div class="auth-logo">FN</div><h2>FN Telecom</h2><p>আপনার বিশ্বস্ত টেলিকম সেবা</p><br>
-<input id="email" type="email" placeholder="আপনার Email" autocomplete="username">
-<input id="password" type="password" placeholder="Password" autocomplete="current-password">
-<button id="loginBtn">Login করুন</button><button id="registerBtn">নতুন Account খুলুন</button><p id="authMessage"></p>
-</div></div>
-
-<div id="appScreen">
 <header><h1>🟢 FN Telecom</h1><p>আপনার বিশ্বস্ত টেলিকম সেবা</p></header>
-<div class="container">
+<main>
 <section id="home" class="page active">
-<div class="card"><div class="title">📱 মোবাইল নম্বর</div><input id="mobile" type="tel" maxlength="11" placeholder="01XXXXXXXXX"></div>
-<div class="card"><div class="title">📡 অপারেটর নির্বাচন</div><div class="grid">
-<div class="operator" onclick="selectOperator('GP')"><span>🟢</span>GP</div>
-<div class="operator" onclick="selectOperator('Banglalink')"><span>🟠</span>Banglalink</div>
-<div class="operator" onclick="selectOperator('Robi')"><span>🔴</span>Robi</div>
-<div class="operator" onclick="selectOperator('Airtel')"><span>🔴</span>Airtel</div>
-<div class="operator" onclick="selectOperator('Teletalk')"><span>🔵</span>Teletalk</div>
-</div></div>
-<div class="card"><div class="title">🔥 জনপ্রিয় অফার</div><div id="homeOffers"></div></div>
-<div class="card"><div class="title">📢 নোটিশ</div><p id="notice">লোড হচ্ছে...</p></div>
+ <div class="card"><h2>📱 মোবাইল নম্বর</h2><input id="mobile" type="tel" maxlength="11" placeholder="01XXXXXXXXX">
+ <h2 style="margin-top:13px">📡 অপারেটর নির্বাচন</h2><div class="grid">
+ <div class="operator" onclick="pickOperator('GP')">🟢 GP</div><div class="operator" onclick="pickOperator('Banglalink')">🟠 Banglalink</div>
+ <div class="operator" onclick="pickOperator('Robi')">🔴 Robi</div><div class="operator" onclick="pickOperator('Airtel')">🔴 Airtel</div>
+ <div class="operator" onclick="pickOperator('Teletalk')">🔵 Teletalk</div></div></div>
+ <div class="card"><h2>🔥 জনপ্রিয় অফার</h2><div id="homeOffers">অফার লোড হচ্ছে...</div></div>
+ <div class="card"><h2>📢 নোটিশ</h2><div id="notice">FN Telecom-এ আপনাকে স্বাগতম।</div></div>
 </section>
-
-<section id="offers" class="page"><div class="card"><div class="title">📦 সকল অফার</div>
-<select id="operatorFilter" onchange="renderOffers()"><option value="all">সকল অপারেটর</option><option>GP</option><option>Banglalink</option><option>Robi</option><option>Airtel</option><option>Teletalk</option></select><div id="offerList"></div></div></section>
-
-<section id="orders" class="page"><div class="card"><div class="title">📋 আমার অর্ডার</div><div id="orderList"></div></div></section>
-
-<section id="balance" class="page">
-<div class="card"><div class="title">💰 আমার ব্যালেন্স</div><div class="balance">৳ <span id="balanceAmount">0.00</span></div><p class="muted">ব্যালেন্স যোগ করতে নিচের আবেদন ফর্ম পূরণ করুন। আবেদন অনুমোদনের আগে ব্যালেন্স যোগ হবে না।</p></div>
-<div class="card"><div class="title">➕ ব্যালেন্স যোগের আবেদন</div>
-<label>কত টাকা যোগ করতে চান?</label><input id="requestAmount" type="number" min="1" max="50000" step="1" placeholder="যেমন ২০০">
-<label>পেমেন্ট মাধ্যম</label><div class="payment-options"><span> bKash </span><span> Nagad </span><span> Rocket </span></div><select id="paymentMethod"><option value="bKash">bKash</option><option value="Nagad">Nagad</option><option value="Rocket">Rocket</option></select>
-<label>যে নম্বর থেকে পেমেন্ট করেছেন</label><input id="payerPhone" type="tel" maxlength="11" placeholder="01XXXXXXXXX">
-<label>Transaction ID</label><input id="trxId" maxlength="80" placeholder="TrxID লিখুন">
-<button onclick="submitBalanceRequest()">আবেদন পাঠান</button><p class="hero-note">শুধু পেমেন্ট সম্পন্ন করার পর আবেদন পাঠান। Admin আপনার Transaction ID যাচাই করে অনুমোদন করলে ব্যালেন্স যোগ হবে।</p>
-</div>
-<div class="card"><div class="title">🧾 আমার ব্যালেন্স আবেদনের অবস্থা</div><div id="myBalanceRequests"></div></div>
-<div class="card"><div class="title">📚 লেনদেনের ইতিহাস</div><div id="myTransactions"></div></div>
-</section>
-
-<section id="profile" class="page"><div class="card"><div class="title">👤 আমার প্রোফাইল</div>
-<input id="userName" placeholder="আপনার নাম"><input id="userPhone" maxlength="11" placeholder="মোবাইল নম্বর"><p id="userEmail" class="small"></p>
-<button onclick="saveProfile()">তথ্য সংরক্ষণ</button></div>
-<div class="card"><p>FN Telecom</p><p>WhatsApp: 01640592773</p><button onclick="window.open('https://wa.me/8801640592773','_blank')">WhatsApp যোগাযোগ</button><button class="logout" onclick="logoutUser()">Logout</button></div>
-</section>
-
-<section id="admin" class="page"><div class="card"><div class="title">⚙️ FN Telecom Admin</div>
-<p>মোট অর্ডার: <b id="adminOrders">0</b></p><p>সম্পন্ন অর্ডার: <b id="adminSuccess">0</b></p></div>
-<div class="card"><div class="title">💰 ব্যালেন্স আবেদন পরিচালনা</div><div id="adminBalanceRequests"></div></div>
-<div class="card"><div class="title">➕ নতুন অফার যোগ করুন</div>
-<select id="newOperator"><option>GP</option><option>Banglalink</option><option>Robi</option><option>Airtel</option><option>Teletalk</option></select>
-<input id="newOfferName" placeholder="অফারের নাম"><input id="newOfferPrice" type="number" min="1" placeholder="মূল্য"><input id="newOfferValidity" placeholder="মেয়াদ"><button onclick="addOffer()">অফার যোগ করুন</button></div>
-<div class="card"><div class="title">📦 অফার পরিচালনা</div><div id="adminOfferList"></div></div>
-<div class="card"><div class="title">📋 সকল কাস্টমার অর্ডার</div><div id="adminOrderList"></div></div>
-<div class="card"><div class="title">📢 নোটিশ পরিবর্তন</div><input id="newNotice" placeholder="নতুন নোটিশ"><button onclick="updateNotice()">নোটিশ প্রকাশ</button></div>
-<button class="logout" onclick="showPage('profile')">প্রোফাইলে ফিরে যান</button>
-</section>
-</div>
-<nav id="mainNav">
-<button onclick="showPage('home')">🏠<br>হোম</button><button onclick="showPage('offers')">📦<br>অফার</button>
-<button onclick="showPage('orders')">📋<br>অর্ডার</button><button onclick="showPage('balance')">💰<br>ব্যালেন্স</button>
-<button onclick="showPage('profile')">👤<br>প্রোফাইল</button><button id="adminMenu" style="display:none" onclick="showPage('admin')">⚙️<br>Admin</button>
+<section id="offers" class="page"><div class="card"><h2>📦 সকল অফার</h2><select id="filter" onchange="renderOffers()"><option value="all">সকল অপারেটর</option><option>GP</option><option>Banglalink</option><option>Robi</option><option>Airtel</option><option>Teletalk</option></select><div id="offerList"></div></div></section>
+<section id="orders" class="page"><div class="card"><h2>📋 অর্ডার করুন</h2><p class="hint">নম্বর লিখে অফার নির্বাচন করুন। আপনার অর্ডার অ্যাডমিন প্যানেলে দেখা যাবে।</p><div id="orderStatus"></div></div></section>
+<section id="contact" class="page"><div class="card"><h2>✉️ FN Telecom-এ মেসেজ পাঠান</h2>
+<input id="customerName" placeholder="আপনার নাম"><input id="customerPhone" type="tel" maxlength="11" placeholder="আপনার মোবাইল নম্বর">
+<textarea id="customerMessage" maxlength="2000" placeholder="আপনার মেসেজ লিখুন..."></textarea>
+<button onclick="sendCustomerMessage()">মেসেজ পাঠান</button><div id="sendStatus" class="hint"></div></div>
+<div class="card"><h2>💬 অ্যাডমিনের উত্তর</h2><div id="myReplies">আপনার পাঠানো মেসেজের উত্তর এখানে দেখা যাবে।</div></div></section>
+<section id="admin" class="page"><div class="card"><h2>🔐 অ্যাডমিন প্যানেল</h2><div id="adminGate"><p class="hint">অ্যাডমিন PIN দিন।</p><input id="adminPin" type="password" placeholder="Admin PIN"><button onclick="unlockAdmin()">প্রবেশ করুন</button><p id="pinError" class="hint"></p></div>
+<div id="adminArea" class="hidden">
+<h2>📩 কাস্টমার মেসেজ</h2><div id="adminMessages">লোড হচ্ছে...</div>
+<hr style="border:0;border-top:1px solid #eee;margin:15px 0">
+<h2>📋 কাস্টমার অর্ডার</h2><div id="adminOrders">লোড হচ্ছে...</div>
+<hr style="border:0;border-top:1px solid #eee;margin:15px 0">
+<h2>➕ নতুন অফার যোগ করুন</h2><select id="newOperator"><option>GP</option><option>Banglalink</option><option>Robi</option><option>Airtel</option><option>Teletalk</option></select>
+<input id="newOfferName" placeholder="অফারের নাম"><input id="newOfferPrice" type="number" min="1" placeholder="মূল্য (টাকা)"><input id="newOfferValidity" placeholder="মেয়াদ"><button onclick="addOffer()">অফার যোগ করুন</button>
+<h2 style="margin-top:18px">📦 অফার পরিচালনা</h2><div id="adminOfferList"></div>
+<h2 style="margin-top:18px">📢 নোটিশ পরিবর্তন</h2><input id="newNotice" placeholder="নতুন নোটিশ"><button onclick="saveNotice()">নোটিশ প্রকাশ</button>
+</div></div></section>
+</main>
+<nav>
+<button onclick="showPage('home')">🏠<br>হোম</button><button onclick="showPage('offers')">📦<br>অফার</button><button onclick="showPage('orders')">📋<br>অর্ডার</button><button onclick="showPage('contact')">✉️<br>মেসেজ</button><button onclick="showPage('admin')">⚙️<br>Admin</button>
 </nav>
-</div>
-
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,sendEmailVerification} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
-import {getFirestore,collection,addDoc,getDocs,query,where,orderBy,onSnapshot,doc,getDoc,setDoc,updateDoc,deleteDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
-import {getFunctions,httpsCallable} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-functions.js";
+import {getAuth,signInAnonymously,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+import {getFirestore,collection,addDoc,query,orderBy,onSnapshot,doc,setDoc,updateDoc,deleteDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-const firebaseConfig={apiKey:"AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",authDomain:"fahim-ahmad-telecom.firebaseapp.com",projectId:"fahim-ahmad-telecom",storageBucket:"fahim-ahmad-telecom.firebasestorage.app",messagingSenderId:"965841120853",appId:"1:965841120853:web:7fc6a75769a0fdfbd0eedc",measurementId:"G-N325EFWEXN"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),functions=getFunctions(app,"asia-south1");
+const firebaseConfig={
+ apiKey:"AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",
+ authDomain:"fahim-ahmad-telecom.firebaseapp.com",
+ projectId:"fahim-ahmad-telecom",
+ storageBucket:"fahim-ahmad-telecom.firebasestorage.app",
+ messagingSenderId:"965841120853",
+ appId:"1:965841120853:web:7fc6a75769a0fdfbd0eedc",
+ measurementId:"G-N325EFWEXN"
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
-let currentUser=null,isAdmin=false,offers=[],orders=[];
-let unsubs=[];
-function cleanup(){unsubs.forEach(fn=>{try{fn()}catch(e){}});unsubs=[]}
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function money(v){return Number(v||0).toFixed(2)}
-function msg(t){$("authMessage").innerText=t}
-$("registerBtn").onclick=async()=>{try{const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<6)return msg("সঠিক Email এবং কমপক্ষে ৬ অক্ষরের Password দিন");const r=await createUserWithEmailAndPassword(auth,email,password);await sendEmailVerification(r.user);msg("অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল যাচাই করে তারপর লগইন করুন।");await signOut(auth)}catch(e){msg(e.message)}};
-$("loginBtn").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);msg("")}catch(e){msg(e.message)}};
+let uid=null,selectedOperator="all",offers=[],adminUnlocked=false,unsubs=[];
+const ADMIN_PIN="FN2026"; // প্রকাশের আগে নিজের পছন্দমতো PIN বদলান
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=v=>Number(v||0).toFixed(2);
+function watch(ref,cb,err){unsubs.push(onSnapshot(ref,cb,e=>{console.error(e);if(err)err(e)}))}
 onAuthStateChanged(auth,async user=>{
- cleanup();
- if(!user){currentUser=null;isAdmin=false;$("authScreen").style.display="flex";$("appScreen").style.display="none";return}
- await user.reload();
- if(!user.emailVerified){alert("আগে আপনার ইমেইল যাচাই করুন। ইমেইলের verification link খুলুন।");await signOut(auth);return}
- currentUser=user;const token=await user.getIdTokenResult(true);isAdmin=token.claims.admin===true;
- $("authScreen").style.display="none";$("appScreen").style.display="block";$("userEmail").innerText=user.email||"";
- $("adminMenu").style.display=isAdmin?"block":"none";loadData();showPage("home");
+ if(user){uid=user.uid;startApp()}
+ else {try{await signInAnonymously(auth)}catch(e){alert("Firebase Anonymous Authentication চালু করুন: "+e.message)}}
 });
-window.logoutUser=()=>signOut(auth);
-window.showPage=id=>{if(id==="admin"&&!isAdmin)return alert("Admin অনুমতি নেই");document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$(id).classList.add("active")};
-function loadData(){loadOffers();loadOrders();loadProfile();loadNotice();loadBalance();if(isAdmin){loadAdminOrders();loadAdminBalanceRequests()}}
-function loadOffers(){unsubs.push(onSnapshot(collection(db,"offers"),s=>{offers=s.docs.map(d=>({id:d.id,...d.data()}));renderOffers();renderHomeOffers();if(isAdmin)renderAdminOffers()},e=>alert("অফার লোড হয়নি: "+e.message)))}
-window.renderOffers=()=>{const f=$("operatorFilter").value;$("offerList").innerHTML=offers.filter(o=>f==="all"||o.operator===f).map(o=>`<div class="offer"><h3>${esc(o.name)}</h3><p>অপারেটর: ${esc(o.operator)}</p><p>মেয়াদ: ${esc(o.validity)}</p><p>মূল্য: ৳${money(o.price)}</p><button onclick="buyOffer('${o.id}')">অর্ডার করুন</button></div>`).join("")||"কোনো অফার নেই।"};
-function renderHomeOffers(){$("homeOffers").innerHTML=offers.slice(0,3).map(o=>`<div class="offer"><h3>${esc(o.name)}</h3><p>${esc(o.operator)} · ৳${money(o.price)}</p><button onclick="buyOffer('${o.id}')">অর্ডার করুন</button></div>`).join("")||"কোনো অফার নেই।"}
-window.selectOperator=op=>{$("operatorFilter").value=op;showPage("offers");renderOffers()};
-window.buyOffer=async id=>{const o=offers.find(x=>x.id===id),phone=$("mobile").value.trim();if(!o)return;if(!/^01[3-9]\d{8}$/.test(phone))return alert("সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন");if(!confirm(o.name+" অর্ডার করবেন?"))return;try{await addDoc(collection(db,"orders"),{userId:currentUser.uid,userEmail:currentUser.email,offer:o.name,operator:o.operator,phone,price:Number(o.price),status:"Pending",createdAt:serverTimestamp()});alert("অর্ডার জমা হয়েছে");showPage("orders")}catch(e){alert(e.message)}};
-function loadOrders(){const q=query(collection(db,"orders"),where("userId","==",currentUser.uid),orderBy("createdAt","desc"));unsubs.push(onSnapshot(q,s=>{orders=s.docs.map(d=>({id:d.id,...d.data()}));$("orderList").innerHTML=orders.map(o=>`<div class="item"><b>${esc(o.offer)}</b><br>অপারেটর: ${esc(o.operator)}<br>নম্বর: ${esc(o.phone)}<br>মূল্য: ৳${money(o.price)}<br>অবস্থা: <b>${esc(o.status)}</b></div>`).join("")||"এখনো কোনো অর্ডার নেই।"}))}
-function loadProfile(){getDoc(doc(db,"users",currentUser.uid)).then(s=>{if(s.exists()){$("userName").value=s.data().name||"";$("userPhone").value=s.data().phone||""}}).catch(e=>console.error(e))}
-window.saveProfile=async()=>{const name=$("userName").value.trim(),phone=$("userPhone").value.trim();if(phone&&!/^01[3-9]\d{8}$/.test(phone))return alert("সঠিক ১১ ডিজিটের নম্বর দিন");try{await setDoc(doc(db,"users",currentUser.uid),{name,phone,email:currentUser.email},{merge:true});alert("প্রোফাইল সংরক্ষিত হয়েছে")}catch(e){alert(e.message)}};
-function loadNotice(){unsubs.push(onSnapshot(doc(db,"settings","notice"),s=>$("notice").innerText=s.exists()?s.data().text:"FN Telecom-এ আপনাকে স্বাগতম।"))}
-window.updateNotice=async()=>{if(!isAdmin)return;const text=$("newNotice").value.trim();if(!text)return alert("নোটিশ লিখুন");try{await setDoc(doc(db,"settings","notice"),{text});alert("নোটিশ প্রকাশ হয়েছে")}catch(e){alert(e.message)}};
-function loadBalance(){unsubs.push(onSnapshot(doc(db,"users",currentUser.uid),s=>$("balanceAmount").innerText=money(s.exists()?s.data().balance:0),e=>alert("ব্যালেন্স লোড সমস্যা: "+e.message)));
-const rq=query(collection(db,"balanceRequests"),where("userId","==",currentUser.uid),orderBy("createdAt","desc"));unsubs.push(onSnapshot(rq,s=>$("myBalanceRequests").innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="item">৳${money(x.amount)} · ${esc(x.method)}<br>TrxID: ${esc(x.trxId)}<br>অবস্থা: <b>${esc(x.status)}</b></div>`}).join("")||"কোনো আবেদন নেই।"));
-const tq=query(collection(db,"transactions"),where("userId","==",currentUser.uid),orderBy("createdAt","desc"));unsubs.push(onSnapshot(tq,s=>$("myTransactions").innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="item">${esc(x.type)} · ৳${money(x.amount)}<br>বিবরণ: ${esc(x.note||"")}<br>আগের ব্যালেন্স: ৳${money(x.previousBalance)} · পরের ব্যালেন্স: ৳${money(x.newBalance)}</div>`}).join("")||"এখনো কোনো লেনদেন নেই।"))}
-window.submitBalanceRequest=async()=>{const amount=Number($("requestAmount").value),method=$("paymentMethod").value,phone=$("payerPhone").value.trim(),trxId=$("trxId").value.trim();if(!Number.isInteger(amount)||amount<1||amount>50000)return alert("১ থেকে ৫০,০০০ টাকার মধ্যে পূর্ণ সংখ্যা লিখুন");if(!/^01[3-9]\d{8}$/.test(phone))return alert("সঠিক পেমেন্ট নম্বর দিন");if(trxId.length<6)return alert("সঠিক Transaction ID দিন");try{await addDoc(collection(db,"balanceRequests"),{userId:currentUser.uid,userEmail:currentUser.email,amount,method,payerPhone:phone,trxId,status:"Pending",createdAt:serverTimestamp()});$("requestAmount").value=$("payerPhone").value=$("trxId").value="";alert("আবেদন জমা হয়েছে। Admin যাচাই করার পর ব্যালেন্স যোগ হবে।")}catch(e){alert("আবেদন জমা হয়নি: "+e.message)}};
-function loadAdminBalanceRequests(){unsubs.push(onSnapshot(query(collection(db,"balanceRequests"),where("status","==","Pending"),orderBy("createdAt","asc")),s=>{$("adminBalanceRequests").innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="item"><b>৳${money(x.amount)}</b> · ${esc(x.method)}<br>গ্রাহক: ${esc(x.userEmail)}<br>পেমেন্ট নম্বর: ${esc(x.payerPhone)}<br>TrxID: <b>${esc(x.trxId)}</b><br><button onclick="reviewBalanceRequest('${d.id}','approve')">Approve</button><button class="danger" onclick="reviewBalanceRequest('${d.id}','reject')">Reject</button></div>`}).join("")||"Pending আবেদন নেই।"},e=>alert("Admin request error: "+e.message)))}
-window.reviewBalanceRequest=async(id,action)=>{if(!isAdmin)return alert("Admin অনুমতি নেই");const note=action==="approve"?"পেমেন্ট যাচাই করে অনুমোদন করছেন?":"আবেদন Reject করবেন?";if(!confirm(note))return;try{const fn=httpsCallable(functions,"reviewBalanceRequest");const result=await fn({requestId:id,action});alert(result.data.message||"সম্পন্ন")}catch(e){alert("কাজটি হয়নি: "+(e.message||e))}};
-function loadAdminOrders(){unsubs.push(onSnapshot(query(collection(db,"orders"),orderBy("createdAt","desc")),s=>{const all=s.docs.map(d=>({id:d.id,...d.data()}));$("adminOrders").innerText=all.length;$("adminSuccess").innerText=all.filter(o=>o.status==="Successful").length;$("adminOrderList").innerHTML=all.map(o=>`<div class="item"><b>${esc(o.offer)}</b><br>কাস্টমার: ${esc(o.userEmail)}<br>মোবাইল: ${esc(o.phone)}<br>অপারেটর: ${esc(o.operator)}<br>মূল্য: ৳${money(o.price)}<br>অবস্থা: ${esc(o.status)}<br>${o.status==="Pending"?`<button onclick="changeOrder('${o.id}','Successful')">Successful</button><button class="danger" onclick="changeOrder('${o.id}','Cancelled')">Cancelled</button>`:""}</div>`).join("")||"কোনো অর্ডার নেই।"},e=>alert("Admin Order Error: "+e.message)))}
-window.changeOrder=async(id,status)=>{if(!isAdmin)return alert("অনুমতি নেই");try{await updateDoc(doc(db,"orders",id),{status});alert("অর্ডার আপডেট হয়েছে")}catch(e){alert(e.message)}};
-window.addOffer=async()=>{if(!isAdmin)return;const name=$("newOfferName").value.trim(),price=Number($("newOfferPrice").value),validity=$("newOfferValidity").value.trim(),operator=$("newOperator").value;if(!name||p
+function startApp(){
+ watch(collection(db,"offers"),s=>{offers=s.docs.map(d=>({id:d.id,...d.data()}));renderOffers();renderHomeOffers();renderAdminOffers()});
+ watch(doc(db,"settings","notice"),s=>$("notice").innerText=s.exists()?s.data().text:"FN Telecom-এ আপনাকে স্বাগতম।");
+ watch(query(collection(db,"messages"),orderBy("createdAt","desc")),s=>{
+  const mine=s.docs.filter(d=>d.data().sessionId===uid);
+  $("myReplies").innerHTML=mine.map(d=>{const x=d.data();return `<div class="entry"><b>আপনার মেসেজ:</b> ${esc(x.message)}<br><span class="tag">${esc(x.status||"পাঠানো হয়েছে")}</span>${x.reply?`<br><b>অ্যাডমিনের উত্তর:</b> ${esc(x.reply)}`:"<br><span class='hint'>উত্তরের অপেক্ষায়...</span>"}</div>`}).join("")||"এখনো কোনো মেসেজ পাঠাননি।";
+ });
+}
+window.showPage=id=>{document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$(id).classList.add("active")};
+window.pickOperator=op=>{$("filter").value=op;showPage("offers");renderOffers()};
+function offerCard(o){return `<div class="offer"><strong>${esc(o.name)}</strong><br>অপারেটর: ${esc(o.operator)}<br>মেয়াদ: ${esc(o.validity)}<br>মূল্য: ৳${money(o.price)}<br><button onclick="placeOrder('${o.id}')">এই অফার অর্ডার করুন</button></div>`}
+window.renderOffers=()=>{const f=$("filter").value;$("offerList").innerHTML=offers.filter(o=>f==="all"||o.operator===f).map(offerCard).join("")||"কোনো অফার নেই।"};
+function renderHomeOffers(){$("homeOffers").innerHTML=offers.slice(0,3).map(offerCard).join("")||"এখনো কোনো অফার যোগ করা হয়নি।"}
+window.placeOrder=async id=>{
+ const o=offers.find(x=>x.id===id),phone=$("mobile").value.trim();
+ if(!o)return;if(!/^01[3-9]\d{8}$/.test(phone)){alert("সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন।");showPage("home");return}
+ try{await addDoc(collection(db,"orders"),{sessionId:uid,phone,offer:o.name,operator:o.operator,price:Number(o.price),status:"Pending",createdAt:serverTimestamp()});$("orderStatus").innerHTML=`<p class="tag">অর্ডার জমা হয়েছে</p><p>অফার: ${esc(o.name)}<br>নম্বর: ${esc(phone)}<br>অবস্থা: Pending</p>`;showPage("orders")}
+ catch(e){alert("অর্ডার জমা হয়নি: "+e.message)}
+};
+window.sendCustomerMessage=async()=>{
+ const name=$("customerName").value.trim(),phone=$("customerPhone").value.trim(),message=$("customerMessage").value.trim();
+ if(!name||!/^01[3-9]\d{8}$/.test(phone)||message.length<2){$("sendStatus").innerText="নাম, সঠিক ১১ ডিজিটের নম্বর ও মেসেজ লিখুন।";return}
+ try{await addDoc(collection(db,"messages"),{sessionId:uid,name,phone,message,status:"নতুন",reply:"",createdAt:serverTimestamp()});$("customerMessage").value="";$("sendStatus").innerText="আপনার মেসেজ পাঠানো হয়েছে।";}catch(e){$("sendStatus").innerText="মেসেজ পাঠানো যায়নি: "+e.message}
+};
+window.unlockAdmin=()=>{
+ if($("adminPin").value!==ADMIN_PIN){$("pinError").innerText="PIN সঠিক নয়।";return}
+ adminUnlocked=true;$("adminGate").classList.add("hidden");$("adminArea").classList.remove("hidden");loadAdmin();
+};
+function loadAdmin(){
+ watch(query(collection(db,"messages"),orderBy("createdAt","desc")),s=>{
+  $("adminMessages").innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="entry"><b>${esc(x.name)}</b> · ${esc(x.phone)}<br>${esc(x.message)}<br><span class="tag">${esc(x.status||"নতুন")}</span>${x.reply?`<br><b>আগের উত্তর:</b> ${esc(x.reply)}`:""}<textarea id="reply_${d.id}" placeholder="কাস্টমারকে উত্তর লিখুন">${esc(x.reply||"")}</textarea><button onclick="replyMessage('${d.id}')">উত্তর পাঠান</button></div>`}).join("")||"কোনো মেসেজ নেই।";
+ });
+ watch(query(collection(db,"orders"),orderBy("createdAt","desc")),s=>{
+  $("adminOrders").innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="entry"><b>${esc(x.offer)}</b><br>নম্বর: ${esc(x.phone)} · ${esc(x.operator)}<br>মূল্য: ৳${money(x.price)}<br>অবস্থা: ${esc(x.status)}<br><button onclick="setOrderStatus('${d.id}','Successful')">সম্পন্ন</button> <button class="red" onclick="setOrderStatus('${d.id}','Cancelled')">বাতিল</button></div>`}).join("")||"কোনো অর্ডার নেই।";
+ });
+}
+window.replyMessage=async id=>{if(!adminUnlocked)return;const reply=$("reply_"+id).value.trim();if(!reply)return alert("উত্তর লিখুন।");try{await updateDoc(doc(db,"messages",id),{reply,status:"উত্তর দেওয়া হয়েছে",repliedAt:serverTimestamp()});alert("উত্তর পাঠানো হয়েছে।")}catch(e){alert(e.message)}};
+window.setOrderStatus=async(id,status)=>{if(!adminUnlocked)return;try{await updateDoc(doc(db,"orders",id),{status});}catch(e){alert(e.message)}};
+window.addOffer=async()=>{if(!adminUnlocked)return;const name=$("newOfferName").value.trim(),price=Number($("newOfferPrice").value),validity=$("newOfferValidity").value.trim(),operator=$("newOperator").value;if(!name||price<=0||!validity)return alert("সব তথ্য পূরণ করুন।");try{await addDoc(collection(db,"offers"),{name,price,validity,operator,createdAt:serverTimestamp()});$("newOfferName").value=$("newOfferPrice").value=$("newOfferValidity").value="";alert("অফার যোগ হয়েছে।")}catch(e){alert(e.message)}};
+function renderAdminOffers(){if(!adminUnlocked)return;$("adminOfferList").innerHTML=offers.map(o=>`<div class="entry">${esc(o.name)} · ${esc(o.operator)} · ৳${money(o.price)}<br><button class="red" onclick="removeOffer('${o.id}')">ডিলিট</button></div>`).join("")||"কোনো অফার নেই।"}
+window.removeOffer=async id=>{if(!adminUnlocked||!confirm("অফারটি মুছবেন?"))return;try{await deleteDoc(doc(db,"offers",id))}catch(e){alert(e.message)}};
+window.saveNotice=async()=>{if(!adminUnlocked)return;const text=$("newNotice").value.trim();if(!text)return alert("নোটিশ লিখুন।");try{await setDoc(doc(db,"settings","notice"),{text,updatedAt:serverTimestamp()});alert("নোটিশ প্রকাশ হয়েছে।")}catch(e){alert(e.message)}};
+</script>
+</body></html>
