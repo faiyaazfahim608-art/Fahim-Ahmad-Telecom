@@ -70,10 +70,109 @@ font-weight:700;
 box-shadow:0 2px 6px #0001;
 }
 .google-btn:active{background:#f5f5f5}
+
+/* Arabic Welcome Splash Screen */
+#welcomeSplash{
+position:fixed;
+inset:0;
+z-index:99999;
+background:
+radial-gradient(circle at center,#147d55 0%,#075238 48%,#032d20 100%);
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#fff;
+overflow:hidden;
+opacity:1;
+visibility:visible;
+transition:opacity .8s ease,visibility .8s ease;
+}
+
+#welcomeSplash::before{
+content:"";
+position:absolute;
+inset:18px;
+border:2px solid rgba(231,197,111,.65);
+border-radius:22px;
+pointer-events:none;
+}
+
+#welcomeSplash::after{
+content:"✦";
+position:absolute;
+top:12%;
+color:#f4d68b;
+font-size:42px;
+text-shadow:0 0 20px #f4d68b;
+animation:starGlow 1.8s ease-in-out infinite alternate;
+}
+
+#welcomeSplash.hide{
+opacity:0;
+visibility:hidden;
+}
+
+.welcomeContent{
+position:relative;
+z-index:2;
+padding:25px 15px;
+width:100%;
+animation:welcomeIn 1.1s ease;
+}
+
+.welcomeLine{
+font-family:"Traditional Arabic","Noto Naskh Arabic",serif;
+font-size:clamp(39px,10vw,65px);
+font-weight:900;
+line-height:1.9;
+color:#ffe7a6;
+text-shadow:
+0 3px 2px #553b12,
+0 0 12px rgba(255,220,130,.55);
+letter-spacing:1px;
+}
+
+.welcomeDivider{
+width:120px;
+height:3px;
+margin:8px auto;
+border-radius:10px;
+background:linear-gradient(90deg,transparent,#f4d68b,transparent);
+}
+
+.welcomeSub{
+color:#e4f8e9;
+font-size:14px;
+letter-spacing:3px;
+margin-top:20px;
+font-weight:600;
+}
+
+@keyframes welcomeIn{
+from{opacity:0;transform:translateY(30px) scale(.88)}
+to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes starGlow{
+from{opacity:.5;transform:scale(.85) rotate(0deg)}
+to{opacity:1;transform:scale(1.15) rotate(25deg)}
+}
 </style>
 </head>
 
 <body>
+
+<!-- Arabic Welcome Splash -->
+<div id="welcomeSplash">
+  <div class="welcomeContent">
+    <div class="welcomeLine" dir="rtl">السَّلَامُ عَلَيْكُمْ</div>
+    <div class="welcomeDivider"></div>
+    <div class="welcomeLine" dir="rtl">أَهْلًا وَسَهْلًا</div>
+    <div class="welcomeLine" dir="rtl">مَرْحَبًا</div>
+    <div class="welcomeSub">WELCOME TO FN TELECOM</div>
+  </div>
+</div>
 
 <header>
 <h1>🟢 FN Telecom</h1>
@@ -968,6 +1067,25 @@ if(installBtn){
 installBtn.style.display="none";
 }
 });
+
+/* Arabic Welcome Splash: hide after 3 seconds */
+
+const showWelcomeSplash=()=>{
+setTimeout(()=>{
+const splash=document.getElementById("welcomeSplash");
+
+if(splash){
+splash.classList.add("hide");
+setTimeout(()=>splash.remove(),850);
+}
+},3000);
+};
+
+if(document.readyState==="complete"){
+showWelcomeSplash();
+}else{
+window.addEventListener("load",showWelcomeSplash,{once:true});
+}
 
 </script>
 </body>
