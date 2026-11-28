@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!DOCTYPE html><html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -88,8 +87,7 @@ nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7p
 <div class="receiver"><div>Send Money করুন এই নম্বরে:</div><strong id="receiverNumber"></strong>
 <button class="copy-btn secondary" onclick="copyReceiver()">নম্বর কপি</button><br>পেমেন্টের পরিমাণ: <strong id="paymentAmount"></strong></div>
 <div class="payment-note">⚠️ অনুগ্রহ করে নির্বাচিত মাধ্যমে উপরের নম্বরে ঠিক পরিমাণ টাকা Send Money করুন। তারপর নিচের তথ্য পূরণ করুন।</div>
-<input id="senderPhone" type="tel" maxlength="11" placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন">
-<input id="transactionId" type="text" placeholder="Transaction ID লিখুন">
+<input id="senderLast4" type="text" inputmode="numeric" maxlength="4" placeholder="টাকা পাঠানো নম্বরের শেষ ৪ সংখ্যা">
 <button id="submitPayment" onclick="submitPayment()" style="width:100%">পেমেন্ট তথ্য জমা দিন</button>
 </div></div></section>
 <section id="contact" class="page">
@@ -119,9 +117,7 @@ nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7p
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 import {getAuth,signInAnonymously,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
-import {getFirestore,collection,addDoc,query,orderBy,onSnapshot,doc,setDoc,updateDoc,where,serverTimestamp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
-
-const firebaseConfig={
+import {getFirestore,collection,addDoc,query,orderBy,onSnapshot,doc,setDoc,updateDoc,where,serverTimestamp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";const firebaseConfig={
 apiKey:"AIzaSyCxCr4NkVhnFi2cFRcvA9v8Djr1Df9_76Y",
 authDomain:"fahim-ahmad-telecom.firebaseapp.com",
 projectId:"fahim-ahmad-telecom",
@@ -135,7 +131,7 @@ const $=id=>document.getElementById(id);
 let uid=null,offers=[],adminUnlocked=false,pendingOffer=null,pendingPhone="",selectedPaymentMethod="",unsubs=[];
 const ADMIN_PIN="FN2026";
 const paymentNumbers={bKash:"01327335497",Nagad:"01640592773",Rocket:"01327335497"};
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">",'"':""","'":"'"}[c]));
 const money=v=>Number(v||0).toFixed(2);
 function watch(ref,cb){const unsub=onSnapshot(ref,cb,e=>{console.error(e);alert("Firebase সমস্যা: "+e.message);});unsubs.push(unsub);}
 function statusLabel(status){
@@ -159,6 +155,7 @@ watch(query(collection(db,"orders"),where("sessionId","==",uid)),s=>{
 const myOrders=s.docs.map(d=>({id:d.id,...d.data()}));
 myOrders.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
 $("orderStatus").innerHTML=myOrders.map(x=>`
+
 <div class="entry">
 <b>📦 ${esc(x.offer)}</b> <span class="tag ${statusClass(x.status)}">${esc(statusLabel(x.status))}</span>
 <br><span class="hint">অর্ডার আইডি: ${esc(x.id)}</span>
@@ -166,7 +163,7 @@ $("orderStatus").innerHTML=myOrders.map(x=>`
 <br>অপারেটর: ${esc(x.operator)}
 <br>মূল্য: ৳${money(x.price)}
 <br>পেমেন্ট মাধ্যম: ${esc(x.paymentMethod||"-")}
-<br>Transaction ID: ${esc(x.transactionId||"-")}
+<br>পেমেন্ট নম্বরের শেষ ৪ সংখ্যা: ${esc(x.senderLast4||"-")}
 <br>পেমেন্ট যাচাই: ${esc(x.paymentStatus||"যাচাই অপেক্ষমাণ")}
 </div>`).join("")||"এখনো কোনো অর্ডার করা হয়নি।";
 });
@@ -200,20 +197,52 @@ document.querySelectorAll(".pay-option").forEach(x=>x.classList.remove("selected
 const index={bKash:0,Nagad:1,Rocket:2}[method];document.querySelectorAll(".pay-option")[index].classList.add("selected");
 $("receiverNumber").innerText=paymentNumbers[method];$("paymentAmount").innerText="৳"+money(pendingOffer.price);$("paymentDetails").classList.remove("hidden");
 };
-window.copyReceiver=async()=>{try{await navigator.clipboard.writeText(paymentNumbers[selectedPaymentMethod]);alert("পেমেন্ট নম্বর কপি হয়েছে।");}catch(e){alert("নম্বরটি হাতে কপি করুন: "+paymentNumbers[selectedPaymentMethod]);}};
-window.submitPayment=async()=>{
+window.copyReceiver=async()=>{try{await navigator.clipboard.writeText(paymentNumbers[selectedPaymentMethod]);alert("পেমেন্ট নম্বর কপি হয়েছে।");}catch(e){alert("নম্বরটি হাতে কপি করুন: "+paymentNumbers[selectedPaymentMethod]);}};window.submitPayment=async()=>{
 if(!pendingOffer||!selectedPaymentMethod)return;
-const sender=$("senderPhone").value.trim(),trx=$("transactionId").value.trim();
-if(!/^01[3-9]\d{8}$/.test(sender)){alert("সঠিক ১১ ডিজিটের পেমেন্টকারীর নম্বর দিন।");return;}
-if(trx.length<5){alert("সঠিক Transaction ID লিখুন।");return;}
-const btn=$("submitPayment");btn.disabled=true;btn.innerText="জমা হচ্ছে...";
+
+const last4=$("senderLast4").value.trim();
+
+if(!/^\d{4}$/.test(last4)){
+alert("টাকা পাঠানো মোবাইল নম্বরের শেষ ৪টি সংখ্যা লিখুন।");
+return;
+}
+
+const btn=$("submitPayment");
+btn.disabled=true;
+btn.innerText="জমা হচ্ছে...";
+
 try{
-await addDoc(collection(db,"orders"),{sessionId:uid,phone:pendingPhone,offer:pendingOffer.name,operator:pendingOffer.operator,price:Number(pendingOffer.price),paymentMethod:selectedPaymentMethod,receiverNumber:paymentNumbers[selectedPaymentMethod],senderPhone:sender,transactionId:trx,paymentStatus:"Verification Pending",status:"Pending",createdAt:serverTimestamp()});
-$("paymentPanel").classList.add("hidden");$("senderPhone").value="";$("transactionId").value="";
-pendingOffer=null;selectedPaymentMethod="";btn.disabled=false;btn.innerText="পেমেন্ট তথ্য জমা দিন";
+await addDoc(collection(db,"orders"),{
+sessionId:uid,
+phone:pendingPhone,
+offer:pendingOffer.name,
+operator:pendingOffer.operator,
+price:Number(pendingOffer.price),
+paymentMethod:selectedPaymentMethod,
+receiverNumber:paymentNumbers[selectedPaymentMethod],
+senderLast4:last4,
+paymentStatus:"Verification Pending",
+status:"Pending",
+createdAt:serverTimestamp()
+});
+
+$("paymentPanel").classList.add("hidden");
+$("senderLast4").value="";
+
+pendingOffer=null;
+selectedPaymentMethod="";
+btn.disabled=false;
+btn.innerText="পেমেন্ট তথ্য জমা দিন";
+
 alert("আপনার অর্ডার জমা হয়েছে। অর্ডারের অবস্থা এই পেজে স্বয়ংক্রিয়ভাবে দেখা যাবে।");
-}catch(e){alert("অর্ডার জমা হয়নি: "+e.message);btn.disabled=false;btn.innerText="পেমেন্ট তথ্য জমা দিন";}
+
+}catch(e){
+alert("অর্ডার জমা হয়নি: "+e.message);
+btn.disabled=false;
+btn.innerText="পেমেন্ট তথ্য জমা দিন";
+}
 };
+
 window.sendCustomerMessage=async()=>{
 const name=$("customerName").value.trim(),phone=$("customerPhone").value.trim(),message=$("customerMessage").value.trim();
 if(!name||!/^01[3-9]\d{8}$/.test(phone)||message.length<2){$("sendStatus").innerText="নাম, সঠিক নম্বর ও মেসেজ লিখুন।";return;}
@@ -226,12 +255,13 @@ adminUnlocked=true;$("adminGate").classList.add("hidden");$("adminArea").classLi
 };
 function loadAdmin(){
 watch(query(collection(db,"messages"),orderBy("createdAt","desc")),s=>{
-$("adminMessages").innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="entry"><b>${esc(x.name)}</b> · ${esc(x.phone)}<br>${esc(x.message)}<br><span class="tag">${esc(x.status||"নতুন")}</span>${x.reply?`<br><b>আগের উত্তর:</b> ${esc(x.reply)}`:""}<textarea id="reply_${d.id}" placeholder="কাস্টমারকে উত্তর লিখুন">${esc(x.reply||"")}</textarea><button onclick="replyMessage('${d.id}')">উত্তর পাঠান</button></div>`;}).join("")||"কোনো মেসেজ নেই।";
+$("adminMessages").innerHTML=s.docs.map(d=>{const x=d.data();return "<div class="entry"><b>${esc(x.name)}</b> · ${esc(x.phone)}<br>${esc(x.message)}<br><span class="tag">${esc(x.status||"নতুন")}</span>${x.reply?"<br><b>আগের উত্তর:</b> ${esc(x.reply)}":""}<textarea id="reply_${d.id}" placeholder="কাস্টমারকে উত্তর লিখুন">${esc(x.reply||"")}</textarea><button onclick="replyMessage('${d.id}')">উত্তর পাঠান</button></div>";}).join("")||"কোনো মেসেজ নেই।";
 });
 watch(query(collection(db,"orders"),orderBy("createdAt","desc")),s=>{
 $("adminOrders").innerHTML=s.docs.map(d=>{const x=d.data();return `<div class="entry">
 <b>📦 ${esc(x.offer)}</b><br>অর্ডার আইডি: ${esc(d.id)}<br>কাস্টমারের নম্বর: ${esc(x.phone)}<br>অপারেটর: ${esc(x.operator)}<br>অফারের মূল্য: ৳${money(x.price)}
-<hr><b>💳 পেমেন্ট তথ্য</b><br>মাধ্যম: ${esc(x.paymentMethod||"পুরোনো অর্ডার")}<br>যে নম্বর থেকে পাঠিয়েছে: ${esc(x.senderPhone||"-")}<br>যে নম্বরে পাঠিয়েছে: ${esc(x.receiverNumber||"-")}<br>Transaction ID: <b>${esc(x.transactionId||"-")}</b><br>পেমেন্ট যাচাই: ${esc(x.paymentStatus||"-")}<br>অর্ডারের অবস্থা: <span class="tag ${statusClass(x.status)}">${esc(statusLabel(x.status))}</span><br><br>
+
+<hr><b>💳 পেমেন্ট তথ্য</b><br>মাধ্যম: ${esc(x.paymentMethod||"পুরোনো অর্ডার")}<br>পেমেন্ট নম্বরের শেষ ৪ সংখ্যা: <b>${esc(x.senderLast4||"-")}</b><br>যে নম্বরে পাঠিয়েছে: ${esc(x.receiverNumber||"-")}<br>পেমেন্ট যাচাই: ${esc(x.paymentStatus||"-")}<br>অর্ডারের অবস্থা: <span class="tag ${statusClass(x.status)}">${esc(statusLabel(x.status))}</span><br><br>
 <button class="orange" onclick="setOrderStatus('${d.id}','Processing')">⏳ প্রসেসিং</button>
 <button onclick="setOrderStatus('${d.id}','Successful')">✅ টাকা যাচাই করে MB পাঠানো হয়েছে</button>
 <button class="red" onclick="setOrderStatus('${d.id}','Cancelled')">❌ বাতিল</button>
@@ -279,14 +309,12 @@ window.saveNotice=async()=>{
 if(!adminUnlocked)return;const text=$("newNotice").value.trim();if(!text)return alert("নোটিশ লিখুন।");
 try{await setDoc(doc(db,"settings","notice"),{text,updatedAt:serverTimestamp()});alert("নোটিশ প্রকাশ হয়েছে।");}
 catch(e){alert(e.message);}
-};
-
-// PWA: Service Worker registration
+};// PWA: Service Worker registration
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js")
-      .catch(error => console.error("Service Worker registration failed:", error));
-  });
+window.addEventListener("load", () => {
+navigator.serviceWorker.register("./service-worker.js")
+.catch(error => console.error("Service Worker registration failed:", error));
+});
 }
 
 // PWA: Install prompt
@@ -294,24 +322,25 @@ let deferredPrompt = null;
 const installBtn = document.getElementById("installBtn");
 
 window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-  deferredPrompt = event;
-  if (installBtn) installBtn.style.display = "inline-block";
+event.preventDefault();
+deferredPrompt = event;
+if (installBtn) installBtn.style.display = "inline-block";
 });
 
 if (installBtn) {
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    installBtn.style.display = "none";
-  });
+installBtn.addEventListener("click", async () => {
+if (!deferredPrompt) return;
+deferredPrompt.prompt();
+await deferredPrompt.userChoice;
+deferredPrompt = null;
+installBtn.style.display = "none";
+});
 }
 
 window.addEventListener("appinstalled", () => {
-  if (installBtn) installBtn.style.display = "none";
+if (installBtn) installBtn.style.display = "none";
 });
 </script>
+
 </body>
 </html>
