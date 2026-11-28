@@ -1,8 +1,11 @@
+<!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#087b4e">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <title>FN Telecom</title>
 <style>
 :root{--g:#087b4e;--d:#063d2b;--mint:#eaf7ef;--ink:#173629;--muted:#718078;--line:#e3eee7}
@@ -11,6 +14,7 @@ body{margin:0;font-family:system-ui,Arial,sans-serif;background:#f3f7f4;color:va
 header{background:linear-gradient(120deg,#053b29,#087b4e);color:white;padding:23px 16px;text-align:center;border-radius:0 0 23px 23px}
 header h1{margin:0;font-size:25px}
 header p{margin:4px 0 0;color:#d6f3e2;font-size:13px}
+#installBtn{display:none;background:white;color:#087b4e;margin-top:14px;font-weight:700}
 main{max-width:680px;margin:auto;padding:15px}
 .card{background:white;padding:17px;border:1px solid var(--line);border-radius:17px;margin-bottom:14px;box-shadow:0 8px 24px #073d2810}
 h2{font-size:17px;color:var(--d);margin:0 0 13px}
@@ -46,7 +50,11 @@ nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7p
 </style>
 </head>
 <body>
-<header><h1>🟢 FN Telecom</h1><p>আপনার বিশ্বস্ত টেলিকম সেবা</p></header>
+<header>
+<h1>🟢 FN Telecom</h1>
+<p>আপনার বিশ্বস্ত টেলিকম সেবা</p>
+<button id="installBtn" type="button">📲 অ্যাপ ইনস্টল করুন</button>
+</header>
 <main>
 <section id="home" class="page active">
 <div class="card">
@@ -272,6 +280,38 @@ if(!adminUnlocked)return;const text=$("newNotice").value.trim();if(!text)return 
 try{await setDoc(doc(db,"settings","notice"),{text,updatedAt:serverTimestamp()});alert("নোটিশ প্রকাশ হয়েছে।");}
 catch(e){alert(e.message);}
 };
+
+// PWA: Service Worker registration
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .catch(error => console.error("Service Worker registration failed:", error));
+  });
+}
+
+// PWA: Install prompt
+let deferredPrompt = null;
+const installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  if (installBtn) installBtn.style.display = "inline-block";
+});
+
+if (installBtn) {
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.style.display = "none";
+  });
+}
+
+window.addEventListener("appinstalled", () => {
+  if (installBtn) installBtn.style.display = "none";
+});
 </script>
 </body>
 </html>
