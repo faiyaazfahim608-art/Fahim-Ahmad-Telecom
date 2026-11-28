@@ -54,17 +54,125 @@ nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7p
 .copy-btn{padding:7px 12px;font-size:12px}
 .payment-note{background:#fff7e8;border:1px solid #f2dfb8;padding:12px;border-radius:11px;font-size:13px;line-height:1.7;margin:12px 0}
 
-/* Login screen */
+/* Google Login screen */
 #authScreen{max-width:500px;margin:25px auto;padding:15px}
 #authScreen .card{padding:22px}
 #authScreen h2{font-size:20px}
-#recaptcha-container{margin:12px 0}
 #authMessage{line-height:1.7}
-#otpArea{margin-top:12px}
+.google-btn{
+width:100%;
+margin-top:15px;
+padding:14px;
+background:white;
+color:#333;
+border:1px solid #ddd;
+font-weight:700;
+box-shadow:0 2px 6px #0001;
+}
+.google-btn:active{background:#f5f5f5}
+
+/* Arabic Welcome Splash Screen */
+#welcomeSplash{
+position:fixed;
+inset:0;
+z-index:99999;
+background:
+radial-gradient(circle at center,#147d55 0%,#075238 48%,#032d20 100%);
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#fff;
+overflow:hidden;
+opacity:1;
+visibility:visible;
+transition:opacity .8s ease,visibility .8s ease;
+}
+
+#welcomeSplash::before{
+content:"";
+position:absolute;
+inset:18px;
+border:2px solid rgba(231,197,111,.65);
+border-radius:22px;
+pointer-events:none;
+}
+
+#welcomeSplash::after{
+content:"✦";
+position:absolute;
+top:12%;
+color:#f4d68b;
+font-size:42px;
+text-shadow:0 0 20px #f4d68b;
+animation:starGlow 1.8s ease-in-out infinite alternate;
+}
+
+#welcomeSplash.hide{
+opacity:0;
+visibility:hidden;
+}
+
+.welcomeContent{
+position:relative;
+z-index:2;
+padding:25px 15px;
+width:100%;
+animation:welcomeIn 1.1s ease;
+}
+
+.welcomeLine{
+font-family:"Traditional Arabic","Noto Naskh Arabic",serif;
+font-size:clamp(39px,10vw,65px);
+font-weight:900;
+line-height:1.9;
+color:#ffe7a6;
+text-shadow:
+0 3px 2px #553b12,
+0 0 12px rgba(255,220,130,.55);
+letter-spacing:1px;
+}
+
+.welcomeDivider{
+width:120px;
+height:3px;
+margin:8px auto;
+border-radius:10px;
+background:linear-gradient(90deg,transparent,#f4d68b,transparent);
+}
+
+.welcomeSub{
+color:#e4f8e9;
+font-size:14px;
+letter-spacing:3px;
+margin-top:20px;
+font-weight:600;
+}
+
+@keyframes welcomeIn{
+from{opacity:0;transform:translateY(30px) scale(.88)}
+to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes starGlow{
+from{opacity:.5;transform:scale(.85) rotate(0deg)}
+to{opacity:1;transform:scale(1.15) rotate(25deg)}
+}
 </style>
 </head>
 
 <body>
+
+<!-- Arabic Welcome Splash -->
+<div id="welcomeSplash">
+  <div class="welcomeContent">
+    <div class="welcomeLine" dir="rtl">السَّلَامُ عَلَيْكُمْ</div>
+    <div class="welcomeDivider"></div>
+    <div class="welcomeLine" dir="rtl">أَهْلًا وَسَهْلًا</div>
+    <div class="welcomeLine" dir="rtl">مَرْحَبًا</div>
+    <div class="welcomeSub">WELCOME TO FN TELECOM</div>
+  </div>
+</div>
 
 <header>
 <h1>🟢 FN Telecom</h1>
@@ -74,29 +182,15 @@ nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7p
 <button id="logoutBtn" class="hidden" type="button" onclick="logoutUser()">লগআউট</button>
 </header>
 
-<!-- Login / Registration -->
+<!-- Google Login / Registration -->
 <section id="authScreen" class="hidden">
 <div class="card">
 <h2>🔐 FN Telecom অ্যাকাউন্ট</h2>
-<p class="hint">মোবাইল নম্বর দিয়ে লগইন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
+<p class="hint">Google অ্যাকাউন্ট দিয়ে লগইন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
 
-<input id="authPhone" type="tel" maxlength="11"
-inputmode="numeric" placeholder="01XXXXXXXXX">
-
-<div id="recaptcha-container"></div>
-
-<button id="sendOtpBtn" onclick="sendOTP()" style="width:100%">
-📩 OTP পাঠান
+<button id="googleLoginBtn" class="google-btn" onclick="googleLogin()">
+🌐 Google দিয়ে লগইন / রেজিস্ট্রেশন
 </button>
-
-<div id="otpArea" class="hidden">
-<input id="otpCode" type="text" inputmode="numeric"
-maxlength="6" placeholder="SMS-এ পাওয়া ৬ ডিজিটের OTP">
-
-<button id="verifyOtpBtn" onclick="verifyOTP()" style="width:100%">
-✅ OTP যাচাই করে প্রবেশ করুন
-</button>
-</div>
 
 <p id="authMessage" class="hint"></p>
 </div>
@@ -265,9 +359,11 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-
 import {
 getAuth,
 onAuthStateChanged,
-signInWithPhoneNumber,
-RecaptchaVerifier,
-signOut
+GoogleAuthProvider,
+signInWithPopup,
+signOut,
+setPersistence,
+browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
 
 import {
@@ -298,6 +394,9 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
+const googleProvider=new GoogleAuthProvider();
+googleProvider.setCustomParameters({prompt:"select_account"});
+
 const $=id=>document.getElementById(id);
 
 let uid=null;
@@ -308,9 +407,6 @@ let pendingPhone="";
 let selectedPaymentMethod="";
 let unsubs=[];
 let appStarted=false;
-let confirmationResult=null;
-let recaptchaVerifier=null;
-let recaptchaWidgetRendered=false;
 
 const ADMIN_PIN="FN2026";
 
@@ -354,118 +450,49 @@ status==="Cancelled"?"cancel":
 status==="Processing"?"processing":"";
 }
 
-/* Phone OTP Login and Registration */
+/* Google Login and Registration */
 
-function resetRecaptcha(){
-if(recaptchaVerifier){
-recaptchaVerifier.clear();
-recaptchaVerifier=null;
-}
-recaptchaWidgetRendered=false;
-$("recaptcha-container").innerHTML="";
-}
+window.googleLogin=async()=>{
 
-window.sendOTP=async()=>{
+const btn=$("googleLoginBtn");
+const message=$("authMessage");
 
-const phone=$("authPhone").value.trim();
-
-if(!/^01[3-9]\d{8}$/.test(phone)){
-$("authMessage").innerText="সঠিক ১১ ডিজিটের বাংলাদেশি মোবাইল নম্বর লিখুন।";
-return;
-}
-
-const btn=$("sendOtpBtn");
 btn.disabled=true;
-btn.innerText="OTP পাঠানো হচ্ছে...";
+btn.innerText="Google দিয়ে প্রবেশ করা হচ্ছে...";
+message.innerText="";
 
 try{
 
-if(!recaptchaVerifier){
-recaptchaVerifier=new RecaptchaVerifier(
-auth,
-"recaptcha-container",
-{
-size:"normal",
-callback:()=>{
-$("authMessage").innerText="নম্বর যাচাই হয়েছে।";
-},
-"expired-callback":()=>{
-$("authMessage").innerText="reCAPTCHA মেয়াদ শেষ হয়েছে। আবার চেষ্টা করুন।";
-}
-}
-);
-}
+const result=await signInWithPopup(auth,googleProvider);
+const user=result.user;
 
-if(!recaptchaWidgetRendered){
-await recaptchaVerifier.render();
-recaptchaWidgetRendered=true;
-}
-
-const fullPhone="+88"+phone;
-
-confirmationResult=await signInWithPhoneNumber(
-auth,
-fullPhone,
-recaptchaVerifier
-);
-
-$("otpArea").classList.remove("hidden");
-$("authMessage").innerText="আপনার নম্বরে OTP পাঠানো হয়েছে।";
-btn.innerText="OTP পাঠানো হয়েছে";
-
-}catch(e){
-
-console.error(e);
-$("authMessage").innerText="OTP পাঠানো যায়নি: "+e.message;
-
-resetRecaptcha();
-
-btn.disabled=false;
-btn.innerText="📩 আবার OTP পাঠান";
-
-}
-
-};
-
-window.verifyOTP=async()=>{
-
-const code=$("otpCode").value.trim();
-
-if(!confirmationResult){
-$("authMessage").innerText="আগে OTP পাঠান।";
-return;
-}
-
-if(!/^\d{6}$/.test(code)){
-$("authMessage").innerText="সঠিক ৬ ডিজিটের OTP লিখুন।";
-return;
-}
-
-const btn=$("verifyOtpBtn");
-btn.disabled=true;
-btn.innerText="যাচাই হচ্ছে...";
-
-try{
-
-const result=await confirmationResult.confirm(code);
-uid=result.user.uid;
-
-await setDoc(doc(db,"users",uid),{
-phone:result.user.phoneNumber,
+await setDoc(doc(db,"users",user.uid),{
+name:user.displayName||"",
+email:user.email||"",
+photoURL:user.photoURL||"",
 lastLogin:serverTimestamp()
 },{merge:true});
 
-confirmationResult=null;
-
-$("authMessage").innerText="লগইন সফল হয়েছে।";
+message.innerText="লগইন সফল হয়েছে।";
 
 }catch(e){
 
 console.error(e);
-$("authMessage").innerText="OTP ভুল অথবা মেয়াদ শেষ হয়েছে: "+e.message;
+
+let errorText=e.message;
+
+if(e.code==="auth/popup-closed-by-user"){
+errorText="লগইন সম্পন্ন হওয়ার আগেই উইন্ডো বন্ধ হয়েছে। আবার চেষ্টা করুন।";
+}else if(e.code==="auth/unauthorized-domain"){
+errorText="Firebase Authentication-এ আপনার ওয়েবসাইটের ডোমেইন অনুমোদন করতে হবে।";
+}else if(e.code==="auth/popup-blocked"){
+errorText="ব্রাউজার পপআপ বন্ধ করেছে। পপআপ অনুমোদন করে আবার চেষ্টা করুন।";
+}
+
+message.innerText="Google লগইন করা যায়নি: "+errorText;
 
 btn.disabled=false;
-btn.innerText="✅ আবার যাচাই করুন";
+btn.innerText="🌐 Google দিয়ে লগইন / রেজিস্ট্রেশন";
 
 }
 
@@ -486,9 +513,15 @@ alert("লগআউট করা যায়নি: "+e.message);
 
 /* Authentication state */
 
+await setPersistence(auth,browserLocalPersistence);
+
 onAuthStateChanged(auth,user=>{
 
-if(user && !user.isAnonymous && user.phoneNumber){
+const isGoogleUser=!!user &&
+!user.isAnonymous &&
+user.providerData.some(p=>p.providerId==="google.com");
+
+if(isGoogleUser){
 
 uid=user.uid;
 
@@ -1034,6 +1067,25 @@ if(installBtn){
 installBtn.style.display="none";
 }
 });
+
+/* Arabic Welcome Splash: hide after 3 seconds */
+
+const showWelcomeSplash=()=>{
+setTimeout(()=>{
+const splash=document.getElementById("welcomeSplash");
+
+if(splash){
+splash.classList.add("hide");
+setTimeout(()=>splash.remove(),850);
+}
+},3000);
+};
+
+if(document.readyState==="complete"){
+showWelcomeSplash();
+}else{
+window.addEventListener("load",showWelcomeSplash,{once:true});
+}
 
 </script>
 </body>
