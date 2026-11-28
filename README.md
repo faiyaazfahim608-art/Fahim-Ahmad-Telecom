@@ -16,6 +16,7 @@ header{background:linear-gradient(120deg,#053b29,#087b4e);color:white;padding:23
 header h1{margin:0;font-size:25px}
 header p{margin:4px 0 0;color:#d6f3e2;font-size:13px}
 #installBtn{display:none;background:white;color:#087b4e;margin-top:14px;font-weight:700}
+#logoutBtn{margin-top:12px;background:#eaf7ef;color:#063d2b}
 main{max-width:680px;margin:auto;padding:15px}
 .card{background:white;padding:17px;border:1px solid var(--line);border-radius:17px;margin-bottom:14px;box-shadow:0 8px 24px #073d2810}
 h2{font-size:17px;color:var(--d);margin:0 0 13px}
@@ -52,15 +53,57 @@ nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7p
 .receiver strong{font-size:20px;color:#087b4e}
 .copy-btn{padding:7px 12px;font-size:12px}
 .payment-note{background:#fff7e8;border:1px solid #f2dfb8;padding:12px;border-radius:11px;font-size:13px;line-height:1.7;margin:12px 0}
+
+/* Login screen */
+#authScreen{max-width:500px;margin:25px auto;padding:15px}
+#authScreen .card{padding:22px}
+#authScreen h2{font-size:20px}
+#recaptcha-container{margin:12px 0}
+#authMessage{line-height:1.7}
+#otpArea{margin-top:12px}
 </style>
 </head>
 
 <body>
+
 <header>
 <h1>🟢 FN Telecom</h1>
 <p>আপনার বিশ্বস্ত টেলিকম সেবা</p>
 <button id="installBtn" type="button">📲 অ্যাপ ইনস্টল করুন</button>
+<br>
+<button id="logoutBtn" class="hidden" type="button" onclick="logoutUser()">লগআউট</button>
 </header>
+
+<!-- Login / Registration -->
+<section id="authScreen" class="hidden">
+<div class="card">
+<h2>🔐 FN Telecom অ্যাকাউন্ট</h2>
+<p class="hint">মোবাইল নম্বর দিয়ে লগইন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
+
+<input id="authPhone" type="tel" maxlength="11"
+inputmode="numeric" placeholder="01XXXXXXXXX">
+
+<div id="recaptcha-container"></div>
+
+<button id="sendOtpBtn" onclick="sendOTP()" style="width:100%">
+📩 OTP পাঠান
+</button>
+
+<div id="otpArea" class="hidden">
+<input id="otpCode" type="text" inputmode="numeric"
+maxlength="6" placeholder="SMS-এ পাওয়া ৬ ডিজিটের OTP">
+
+<button id="verifyOtpBtn" onclick="verifyOTP()" style="width:100%">
+✅ OTP যাচাই করে প্রবেশ করুন
+</button>
+</div>
+
+<p id="authMessage" class="hint"></p>
+</div>
+</section>
+
+<!-- Authenticated App -->
+<div id="appShell" class="hidden">
 
 <main>
 
@@ -214,13 +257,17 @@ nav button{flex:1;background:transparent;color:#365747;font-size:11px;padding:7p
 <button onclick="showPage('admin')">⚙️<br>Admin</button>
 </nav>
 
+</div>
+
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 
 import {
 getAuth,
-signInAnonymously,
-onAuthStateChanged
+onAuthStateChanged,
+signInWithPhoneNumber,
+RecaptchaVerifier,
+signOut
 } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
 
 import {
@@ -260,6 +307,10 @@ let pendingOffer=null;
 let pendingPhone="";
 let selectedPaymentMethod="";
 let unsubs=[];
+let appStarted=false;
+let confirmationResult=null;
+let recaptchaVerifier=null;
+let recaptchaWidgetRendered=false;
 
 const ADMIN_PIN="FN2026";
 
@@ -303,18 +354,171 @@ status==="Cancelled"?"cancel":
 status==="Processing"?"processing":"";
 }
 
-onAuthStateChanged(auth,async user=>{
-if(user){
-uid=user.uid;
-startApp();
-}else{
+/* Phone OTP Login and Registration */
+
+function resetRecaptcha(){
+if(recaptchaVerifier){
+recaptchaVerifier.clear();
+recaptchaVerifier=null;
+}
+recaptchaWidgetRendered=false;
+$("recaptcha-container").innerHTML="";
+}
+
+window.sendOTP=async()=>{
+
+const phone=$("authPhone").value.trim();
+
+if(!/^01[3-9]\d{8}$/.test(phone)){
+$("authMessage").innerText="সঠিক ১১ ডিজিটের বাংলাদেশি মোবাইল নম্বর লিখুন।";
+return;
+}
+
+const btn=$("sendOtpBtn");
+btn.disabled=true;
+btn.innerText="OTP পাঠানো হচ্ছে...";
+
 try{
-await signInAnonymously(auth);
+
+if(!recaptchaVerifier){
+recaptchaVerifier=new RecaptchaVerifier(
+auth,
+"recaptcha-container",
+{
+size:"normal",
+callback:()=>{
+$("authMessage").innerText="নম্বর যাচাই হয়েছে।";
+},
+"expired-callback":()=>{
+$("authMessage").innerText="reCAPTCHA মেয়াদ শেষ হয়েছে। আবার চেষ্টা করুন।";
+}
+}
+);
+}
+
+if(!recaptchaWidgetRendered){
+await recaptchaVerifier.render();
+recaptchaWidgetRendered=true;
+}
+
+const fullPhone="+88"+phone;
+
+confirmationResult=await signInWithPhoneNumber(
+auth,
+fullPhone,
+recaptchaVerifier
+);
+
+$("otpArea").classList.remove("hidden");
+$("authMessage").innerText="আপনার নম্বরে OTP পাঠানো হয়েছে।";
+btn.innerText="OTP পাঠানো হয়েছে";
+
 }catch(e){
-alert("Firebase Anonymous Authentication চালু করুন: "+e.message);
+
+console.error(e);
+$("authMessage").innerText="OTP পাঠানো যায়নি: "+e.message;
+
+resetRecaptcha();
+
+btn.disabled=false;
+btn.innerText="📩 আবার OTP পাঠান";
+
 }
+
+};
+
+window.verifyOTP=async()=>{
+
+const code=$("otpCode").value.trim();
+
+if(!confirmationResult){
+$("authMessage").innerText="আগে OTP পাঠান।";
+return;
 }
+
+if(!/^\d{6}$/.test(code)){
+$("authMessage").innerText="সঠিক ৬ ডিজিটের OTP লিখুন।";
+return;
+}
+
+const btn=$("verifyOtpBtn");
+btn.disabled=true;
+btn.innerText="যাচাই হচ্ছে...";
+
+try{
+
+const result=await confirmationResult.confirm(code);
+uid=result.user.uid;
+
+await setDoc(doc(db,"users",uid),{
+phone:result.user.phoneNumber,
+lastLogin:serverTimestamp()
+},{merge:true});
+
+confirmationResult=null;
+
+$("authMessage").innerText="লগইন সফল হয়েছে।";
+
+}catch(e){
+
+console.error(e);
+$("authMessage").innerText="OTP ভুল অথবা মেয়াদ শেষ হয়েছে: "+e.message;
+
+btn.disabled=false;
+btn.innerText="✅ আবার যাচাই করুন";
+
+}
+
+};
+
+window.logoutUser=async()=>{
+
+if(!confirm("আপনি কি লগআউট করতে চান?"))return;
+
+try{
+await signOut(auth);
+location.reload();
+}catch(e){
+alert("লগআউট করা যায়নি: "+e.message);
+}
+
+};
+
+/* Authentication state */
+
+onAuthStateChanged(auth,user=>{
+
+if(user && !user.isAnonymous && user.phoneNumber){
+
+uid=user.uid;
+
+$("authScreen").classList.add("hidden");
+$("appShell").classList.remove("hidden");
+$("logoutBtn").classList.remove("hidden");
+
+if(!appStarted){
+appStarted=true;
+startApp();
+}
+
+}else{
+
+uid=null;
+
+$("appShell").classList.add("hidden");
+$("authScreen").classList.remove("hidden");
+$("logoutBtn").classList.add("hidden");
+
+appStarted=false;
+
+unsubs.forEach(unsub=>unsub());
+unsubs=[];
+
+}
+
 });
+
+/* App data */
 
 function startApp(){
 
@@ -367,7 +571,7 @@ ${x.reply?`<br><b>অ্যাডমিনের উত্তর:</b> ${esc(x.re
 }
 
 window.showPage=id=>{
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.querySelectorAll("#appShell .page").forEach(p=>p.classList.remove("active"));
 $(id).classList.add("active");
 };
 
@@ -786,7 +990,8 @@ alert(e.message);
 
 };
 
-// PWA: Service Worker registration
+/* PWA: Service Worker registration */
+
 if("serviceWorker" in navigator){
 window.addEventListener("load",()=>{
 navigator.serviceWorker.register("./service-worker.js")
@@ -794,7 +999,8 @@ navigator.serviceWorker.register("./service-worker.js")
 });
 }
 
-// PWA: Install prompt
+/* PWA: Install prompt */
+
 let deferredPrompt=null;
 const installBtn=document.getElementById("installBtn");
 
